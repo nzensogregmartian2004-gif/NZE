@@ -1,0 +1,68 @@
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import { env } from "./config/env.js";
+import { generalLimiter } from "./middleware/rateLimit.js";
+import { errorHandler } from "./middleware/errorHandler.js";
+import { authRouter } from "./modules/auth/auth.routes.js";
+import { usersRouter } from "./modules/users/users.routes.js";
+import { activitiesRouter } from "./modules/activities/activities.routes.js";
+import { storesRouter } from "./modules/stores/stores.routes.js";
+import { productsRouter } from "./modules/products/products.routes.js";
+import { categoriesRouter } from "./modules/categories/categories.routes.js";
+import { searchRouter } from "./modules/search/search.routes.js";
+import { deliverersRouter } from "./modules/deliverers/deliverers.routes.js";
+import { ordersRouter } from "./modules/orders/orders.routes.js";
+import { deliveriesRouter } from "./modules/deliveries/deliveries.routes.js";
+import { adminRouter } from "./modules/admin/admin.routes.js";
+import { serviceProfilesRouter } from "./modules/service-profiles/service-profiles.routes.js";
+import { servicePostsRouter } from "./modules/service-posts/service-posts.routes.js";
+import { verifiedJobsRouter } from "./modules/verified-jobs/verified-jobs.routes.js";
+import { reviewsRouter } from "./modules/reviews/reviews.routes.js";
+import { vehiclesRouter } from "./modules/vehicles/vehicles.routes.js";
+import { vehicleBookingsRouter } from "./modules/vehicle-bookings/vehicle-bookings.routes.js";
+import { driversRouter } from "./modules/drivers/drivers.routes.js";
+import { ridesRouter } from "./modules/rides/rides.routes.js";
+import { conversationsRouter } from "./modules/messaging/messaging.routes.js";
+import { notificationsRouter } from "./modules/notifications/notifications.routes.js";
+import { subscriptionPlansRouter, subscriptionsRouter } from "./modules/subscriptions/subscriptions.routes.js";
+import { advertisementsRouter } from "./modules/advertisements/advertisements.routes.js";
+import { reportsRouter } from "./modules/reports/reports.routes.js";
+
+export const app = express();
+
+app.use(helmet());
+app.use(cors({ origin: env.CORS_ORIGIN }));
+app.use(express.json());
+app.use(generalLimiter);
+
+app.get("/health", (_req, res) => res.json({ status: "ok" }));
+
+app.use("/auth", authRouter);
+app.use("/users", usersRouter);
+app.use("/users/me/activities", activitiesRouter);
+app.use("/stores", storesRouter);
+app.use("/products", productsRouter);
+app.use("/categories", categoriesRouter);
+app.use("/search", searchRouter);
+app.use("/deliverers", deliverersRouter);
+app.use("/orders", ordersRouter);
+app.use("/deliveries", deliveriesRouter);
+app.use("/admin", adminRouter);
+app.use("/service-profiles", serviceProfilesRouter);
+app.use("/service-posts", servicePostsRouter);
+app.use("/verified-jobs", verifiedJobsRouter);
+app.use("/reviews", reviewsRouter);
+app.use("/vehicles", vehiclesRouter);
+app.use("/vehicle-bookings", vehicleBookingsRouter);
+app.use("/drivers", driversRouter);
+app.use("/rides", ridesRouter);
+app.use("/conversations", conversationsRouter);
+app.use("/notifications", notificationsRouter);
+app.use("/subscription-plans", subscriptionPlansRouter);
+app.use("/subscriptions", subscriptionsRouter);
+app.use("/advertisements", advertisementsRouter);
+app.use("/reports", reportsRouter);
+
+app.use((_req, res) => res.status(404).json({ error: "Route introuvable" }));
+app.use(errorHandler);
