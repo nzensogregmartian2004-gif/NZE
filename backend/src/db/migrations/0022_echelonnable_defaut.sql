@@ -1,0 +1,1 @@
+ALTER TABLE "produits" ALTER COLUMN "echelonnable" SET DEFAULT false;

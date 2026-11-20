@@ -1,0 +1,202 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1793492504879,
+      "tag": "0000_init",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793496750347,
+      "tag": "0001_rev8_audit_collectes",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793497476025,
+      "tag": "0002_rev9_livraisons",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793498330105,
+      "tag": "0003_rev10_suivi_gps",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793523674874,
+      "tag": "0004_rev12_notifications_ip",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793524605258,
+      "tag": "0005_rev13_reclamations",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793529768564,
+      "tag": "0006_mot_de_passe",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793529963151,
+      "tag": "0007_parcours_client",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793574950134,
+      "tag": "0008_produits_fiche",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793579988219,
+      "tag": "0009_rev16_17_cartographie_verrouillage",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793604216872,
+      "tag": "0010_rev18_echelonnement",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793650000000,
+      "tag": "0011_collecte_double_confirmation",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793662544804,
+      "tag": "0012_rev19_support_litiges",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793663544804,
+      "tag": "0013_suppression_otp_livraison",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1793664544804,
+      "tag": "0014_legal_acceptance",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1794561790663,
+      "tag": "0015_cycle_entreprises",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1794562160324,
+      "tag": "0016_etape_b_suite",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794725977736,
+      "tag": "0017_messagerie_archive_preferences",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794732473621,
+      "tag": "0018_fiches_prestataires",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794850803359,
+      "tag": "0019_fiche_photo",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1794919465173,
+      "tag": "0020_reservation_stock",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1794920744736,
+      "tag": "0021_collecte_stock",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1794961206791,
+      "tag": "0022_echelonnable_defaut",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1794961838103,
+      "tag": "0023_retrait_carte",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1794962501628,
+      "tag": "0024_push_notifications",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1795001945167,
+      "tag": "0025_etape_preparation",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1795005560205,
+      "tag": "0026_echeanciers_articles",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1795006476077,
+      "tag": "0027_echeances_mois",
+      "breakpoints": true
+    }
+  ]
+}

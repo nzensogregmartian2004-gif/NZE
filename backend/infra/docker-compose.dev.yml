@@ -1,0 +1,16 @@
+# Base PostgreSQL pour le développement local uniquement.
+# Le mot de passe est lu depuis le fichier .env (POSTGRES_PASSWORD) : il n'est jamais écrit ici.
+# Version de PostgreSQL : 18 (confirmée par le fondateur).
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: nze
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Définir POSTGRES_PASSWORD dans le fichier .env}
+      POSTGRES_DB: nze_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - nze_pg_data:/var/lib/postgresql/data
+volumes:
+  nze_pg_data:

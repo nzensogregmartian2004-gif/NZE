@@ -1,0 +1,2 @@
+ALTER TABLE "mouvements_stock" ADD COLUMN "bordereau_id" uuid;--> statement-breakpoint
+ALTER TABLE "mouvements_stock" ADD CONSTRAINT "mouvements_stock_bordereau_id_bordereaux_id_fk" FOREIGN KEY ("bordereau_id") REFERENCES "public"."bordereaux"("id") ON DELETE no action ON UPDATE no action;

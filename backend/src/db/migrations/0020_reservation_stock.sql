@@ -1,0 +1,3 @@
+ALTER TABLE "commandes" ADD COLUMN "stock_statut" text DEFAULT 'AUCUN' NOT NULL;--> statement-breakpoint
+ALTER TABLE "commandes" ADD CONSTRAINT "commande_stock_statut_chk" CHECK ("commandes"."stock_statut" in ('AUCUN','RESERVE','VENDU','LIBERE'));--> statement-breakpoint
+ALTER TABLE "stock_niveaux" ADD CONSTRAINT "stock_reserve_sous_disponible_chk" CHECK ("stock_niveaux"."reserve" <= "stock_niveaux"."disponible");

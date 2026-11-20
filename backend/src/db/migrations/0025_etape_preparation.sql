@@ -1,0 +1,2 @@
+ALTER TABLE "commandes" ADD COLUMN "etape_preparation" text;--> statement-breakpoint
+ALTER TABLE "commandes" ADD CONSTRAINT "commande_etape_preparation_chk" CHECK ("commandes"."etape_preparation" is null or "commandes"."etape_preparation" in ('EN_PREPARATION','PRETE'));

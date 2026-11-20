@@ -1,0 +1,1 @@
+ALTER TABLE "fiches_prestataires" ADD COLUMN "photo_cle" text;
