@@ -10,7 +10,7 @@ Statut au 17 novembre 2026 : **non exécuté**. L'environnement de contrôle ne 
 
 ## 2. Lancer le banc d'essai
 
-Depuis `backend/`, avec un fichier `sandbox.env` local contenant `MYPVIT_BASE_URL`, `SANDBOX_CONFIRME=oui`, les variables `MYPVIT_*` de test, et optionnellement :
+Depuis `nze-backend/`, avec un fichier `sandbox.env` local contenant `MYPVIT_BASE_URL`, `SANDBOX_CONFIRME=oui`, les variables `MYPVIT_*` de test, et optionnellement :
 
 - `SANDBOX_TEST_PAYMENT=oui`, `SANDBOX_MSISDN_TEST=<numéro de test>`, `SANDBOX_OPERATEUR_TEST=AIRTEL_MONEY` (ou `MOOV_MONEY`), `SANDBOX_MONTANT=100`.
 

@@ -32,4 +32,4 @@ Ce dossier est la **seule référence active** du projet NZE. Les anciens docume
 
 ## Documents à réécrire
 
-Les README de `backend/` (ancien périmètre) et de `mobile-nze/` (liste d'écrans obsolète) ne sont plus fiables. Ils seront réécrits à l'étape A, à partir de ce dossier.
+Les README de `nze-backend/` (ancien périmètre) et de `nze-mobile/` (liste d'écrans obsolète) ne sont plus fiables. Ils seront réécrits à l'étape A, à partir de ce dossier.

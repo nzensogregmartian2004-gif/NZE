@@ -3,7 +3,7 @@
 Document de référence pour la mise en production. Chaque ligne est un point bloquant tant qu'elle n'est pas cochée.
 
 ## 1. Configuration (Render, service `nze-api`)
-- [ ] `APP_ENV` passé de `test` à `production` (`backend/render.yaml`). **Action du fondateur, au jour du lancement uniquement.** Vérifié dans le code le 17 novembre 2026 : en production, l'API refuse de démarrer si la configuration est incomplète (tests `config-production-lot3`).
+- [ ] `APP_ENV` passé de `test` à `production` (`nze-backend/render.yaml`). **Action du fondateur, au jour du lancement uniquement.** Vérifié dans le code le 17 novembre 2026 : en production, l'API refuse de démarrer si la configuration est incomplète (tests `config-production-lot3`).
 - [ ] `OTP_PROVIDER` : `console` est refusé en production (vérifié, testé). **Bloquant :** l'eSMS n'est pas encore branché ; tant que ce n'est pas fait, le renouvellement de mot de passe ne fonctionne pas en production (décision D-T4).
 - [ ] `DATABASE_URL` : base Supabase de production, distincte de la base de test. **Action du fondateur.**
 - [ ] `SESSION_SECRET` : généré par Render, jamais écrit dans le dépôt. Vérifié dans le code : au moins 32 caractères, sinon refus au démarrage. **À vérifier dans le tableau de bord Render.**
@@ -18,16 +18,16 @@ Document de référence pour la mise en production. Chaque ligne est un point bl
 
 ## 3. Base de données
 - [ ] **Les migrations s'appliquent automatiquement au démarrage** (`startCommand` de `render.yaml`). Avant chaque mise en production, relire les nouvelles migrations : une migration destructive (suppression de tables ou de colonnes) doit être précédée d'une sauvegarde et d'une décision écrite.
-- [ ] Sauvegarde avant mise en production : `DATABASE_URL=... bash backend/scripts/sauvegarde.sh ./sauvegardes`. Les scripts existent ; `pg_dump` n'est pas disponible dans l'environnement de contrôle : **à exécuter par le fondateur.**
-- [ ] Restauration testée sur une base vide : `DATABASE_URL_CIBLE=... bash backend/scripts/restaure.sh fichier.dump`, puis `npm test` contre cette base. Une sauvegarde qui n'a pas été restaurée n'est pas une sauvegarde.
+- [ ] Sauvegarde avant mise en production : `DATABASE_URL=... bash nze-backend/scripts/sauvegarde.sh ./sauvegardes`. Les scripts existent ; `pg_dump` n'est pas disponible dans l'environnement de contrôle : **à exécuter par le fondateur.**
+- [ ] Restauration testée sur une base vide : `DATABASE_URL_CIBLE=... bash nze-backend/scripts/restaure.sh fichier.dump`, puis `npm test` contre cette base. Une sauvegarde qui n'a pas été restaurée n'est pas une sauvegarde.
 
 ## Suivi du lot 3 (17 novembre 2026) — vérifications faites dans le code
 
-- Healthcheck : `render.yaml` pointe vers `/sante`, la route existe (`backend/src/app.ts`). Vérifié.
+- Healthcheck : `render.yaml` pointe vers `/sante`, la route existe (`nze-backend/src/app.ts`). Vérifié.
 - CORS : aucun middleware CORS. L'API sert l'application mobile, pas un navigateur : aucune configuration requise. Vérifié.
 - URL publique : aucune variable d'URL publique n'est utilisée par le serveur ; les adresses de callback MyPVit sont fixées par l'opérateur. Rien à configurer côté code.
 - Blueprint : `APP_ENV: test` et `OTP_PROVIDER: console` restent en place jusqu'au lancement ; `TRUST_PROXY` n'est plus déclaré qu'une fois.
-- Tests ajoutés : `backend/tests/config-production-lot3.test.ts` (liste d'IP en production, IPv4 valides, secret de session, base de données, configuration complète acceptée).
+- Tests ajoutés : `nze-backend/tests/config-production-lot3.test.ts` (liste d'IP en production, IPv4 valides, secret de session, base de données, configuration complète acceptée).
 - Restent à faire par le fondateur : bascule `APP_ENV` au lancement, saisie des variables dans Render, eSMS (bloquant), juriste (O-5), restauration de sauvegarde testée sur une base vide.
 
 ## 4. Tests

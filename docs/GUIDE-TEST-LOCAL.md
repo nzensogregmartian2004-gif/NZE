@@ -19,9 +19,9 @@ Date : 19 novembre 2026. Ce guide sert à tester l'application sur votre ordinat
 
 ## 3. Démarrer le serveur local
 
-Prérequis : Node 22.9 ou plus, dépendances installées (`npm ci` dans `backend/` et `mobile-nze/`).
+Prérequis : Node 22.9 ou plus, dépendances installées (`npm ci` dans `nze-backend/` et `nze-mobile/`).
 
-Dans `backend/` :
+Dans `nze-backend/` :
 
 ```
 npm run demarrage:local
@@ -35,7 +35,7 @@ Les données sont conservées dans le dossier temporaire `nze-local-pg`. Pour re
 
 L'application lit l'adresse de l'API dans `EXPO_PUBLIC_API_URL`. Sur un téléphone, `localhost` désigne le téléphone lui-même : il faut l'adresse IP de l'ordinateur sur le réseau local.
 
-Dans `mobile-nze/` :
+Dans `nze-mobile/` :
 
 ```
 EXPO_PUBLIC_API_URL=http://<adresse-ip-de-votre-ordinateur>:3999 npx expo start
@@ -56,12 +56,12 @@ Utilisez un build de développement (`npx expo run:android`) plutôt que l'appli
 3. **Commerçant** : historique (collectes, ventes, stock, retraits, échéances).
 4. **Paiement échelonné** : activer l'échelonnement (administration), commander un article échelonné, voir les conditions, confirmer, payer l'avance (en local, la confirmation de paiement ne se fera pas réellement), voir l'échéancier.
 5. **Stock faible** : faire passer un article sous 3 unités, vérifier l'alerte.
-6. **Relances** : lancer `npm run job:relances` dans `backend/` pour voir les rappels et retards.
+6. **Relances** : lancer `npm run job:relances` dans `nze-backend/` pour voir les rappels et retards.
 
 ## 7. Vérifications automatiques
 
-Dans `backend/` : `npm test` (412 tests) et `npm run typecheck`.
-Dans `mobile-nze/` : `npm test` (38 tests) et `npx tsc --noEmit`.
+Dans `nze-backend/` : `npm test` (412 tests) et `npm run typecheck`.
+Dans `nze-mobile/` : `npm test` (38 tests) et `npx tsc --noEmit`.
 Contrôle de secrets : `npm run verifier:secrets`.
 
 ## 8. Ce qu'il faudra faire avant la production

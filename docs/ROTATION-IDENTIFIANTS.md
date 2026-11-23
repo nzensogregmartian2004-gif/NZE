@@ -26,7 +26,7 @@ Le fondateur doit confirmer s'il existe d'autres exposition (mot de passe de la 
 
 ## 3. Contrôles après chaque action
 
-1. Lancer `npm run verifier:secrets` dans `backend/` : aucun motif ne doit être trouvé.
+1. Lancer `npm run verifier:secrets` dans `nze-backend/` : aucun motif ne doit être trouvé.
 2. Vérifier dans les journaux Render qu'aucune erreur d'authentification n'apparaît pendant une heure.
 3. Consigner la date et l'action dans le journal de livraison.
 

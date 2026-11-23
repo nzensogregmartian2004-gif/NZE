@@ -4,7 +4,7 @@
 
 Chaque livraison est **un zip complet du projet** (sans `node_modules`), à la racine `NZE/`. Les anciens zips sont obsolètes et ne sont plus utilisés pour reconstruire le projet (D-M2).
 
-Le zip contient : `backend/`, `mobile-nze/`, `docs/`, et le LIRE-MOI de livraison à la racine.
+Le zip contient : `nze-backend/`, `nze-mobile/`, `docs/`, et le LIRE-MOI de livraison à la racine.
 
 ## 2. Contenu du LIRE-MOI de livraison
 
@@ -61,9 +61,9 @@ Quand une décision change :
 **Décision appliquée** : une vente n'est retirable qu'après collecte validée de sa ligne (bordereau `VALIDE`, ligne `CONFORME`), et seulement si la ligne n'a ni réclamation ouverte (`OUVERTE`, `ACCEPTEE`) ni litige ouvert. Cahier V3.0 §15.5 (fonds réservés).
 
 **Changements**
-- `backend/src/modules/finance/retraits.ts` : calcul du solde limité aux lignes retirables. `soldeEntreprise` renvoie en plus `enAttenteCollecte` (ventes comptées, non encore retirables).
-- `backend/tests/helpers.ts` : `collecterEtValider` (livreur, confirmation du commerçant, validation de l'administrateur principal).
-- `backend/tests/p0-retrait-collecte.test.ts` : 5 cas (non collectée, collectée, réclamation ouverte, retrait dans la limite, vente en retrait).
+- `nze-backend/src/modules/finance/retraits.ts` : calcul du solde limité aux lignes retirables. `soldeEntreprise` renvoie en plus `enAttenteCollecte` (ventes comptées, non encore retirables).
+- `nze-backend/tests/helpers.ts` : `collecterEtValider` (livreur, confirmation du commerçant, validation de l'administrateur principal).
+- `nze-backend/tests/p0-retrait-collecte.test.ts` : 5 cas (non collectée, collectée, réclamation ouverte, retrait dans la limite, vente en retrait).
 - Tests adaptés à la règle : `retraits`, `notifications-retrait`, `repartition` (solde à 0, part visible en attente), `suivi-partenaire` (vente comptée en attente).
 
 **Résultats mesurés** : backend typage 0 erreur ; suite backend 278 réussis sur 278 (273 avant, + 5).

@@ -46,7 +46,7 @@ Noms seulement. Les valeurs sont dans Render et Supabase.
 | `CARTOGRAPHIE` | Service de cartographie | non |
 | `FIREBASE_SERVICE_ACCOUNT_JSON` | Clé de service Firebase (push, O-19) | **oui** |
 
-Modèle sans valeurs : `backend/.env.example`.
+Modèle sans valeurs : `nze-backend/.env.example`.
 
 ## 4. Sauvegarde avant déploiement
 

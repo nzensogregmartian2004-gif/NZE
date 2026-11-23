@@ -16,7 +16,7 @@ Date : 19 novembre 2026. Aucune valeur secrète dans ce document. Les valeurs se
 
 ## 2. Firebase (application Android)
 
-**Fichier à fournir** : `google-services.json`, téléchargé depuis la console Firebase pour l'application Android de paquet `com.nze.app`. Il ne contient pas de mot de passe ; il se place à la racine de `mobile-nze/`. Une fois placé, j'ajoute la référence dans `app.json` (`android.googleServicesFile`).
+**Fichier à fournir** : `google-services.json`, téléchargé depuis la console Firebase pour l'application Android de paquet `com.nze.app`. Il ne contient pas de mot de passe ; il se place à la racine de `nze-mobile/`. Une fois placé, j'ajoute la référence dans `app.json` (`android.googleServicesFile`).
 
 **Clé de service (serveur)** : dans la console Firebase, générer une clé de compte de service, puis la saisir **uniquement** dans Render, dans `FIREBASE_SERVICE_ACCOUNT_JSON`. Ce fichier est secret : il ne va ni dans le dépôt, ni dans une discussion.
 
@@ -29,4 +29,4 @@ Date : 19 novembre 2026. Aucune valeur secrète dans ce document. Les valeurs se
 
 ## 4. Contrôle
 
-Dans `backend/` : `npm run verifier:prerequis`. Il indique, pour chaque élément, s'il est présent ou manquant, sans jamais afficher de valeur.
+Dans `nze-backend/` : `npm run verifier:prerequis`. Il indique, pour chaque élément, s'il est présent ou manquant, sans jamais afficher de valeur.

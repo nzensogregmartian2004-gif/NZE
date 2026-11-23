@@ -74,7 +74,7 @@ Quatre langues obligatoires dès la première version publique : français, angl
 ## 10. Identité et design
 
 - Violet et blanc. Logo officiel : tête de panthère violette stylisée, wordmark, caddie.
-- Un seul système de design mobile (`mobile-nze/src/theme`) : couleurs, espacements, rayons, tailles, typographies.
+- Un seul système de design mobile (`nze-mobile/src/theme`) : couleurs, espacements, rayons, tailles, typographies.
 - Police non Inter, proche d'Amazon (choix à finaliser).
 - Accueil : carrousel publicitaire à défilement automatique (5 à 10 annonces), rangées de produits par catégorie.
 - Onglet « Mon profil ».

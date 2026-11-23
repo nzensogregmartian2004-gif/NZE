@@ -5,7 +5,7 @@
 | Couche | Choix | Remarque |
 |---|---|---|
 | Application mobile | React Native avec Expo (Android et iOS), Expo Router | Build de test : `eas build -p android --profile preview` |
-| API | Node.js (22.6 ou plus, `--experimental-strip-types`), Express, TypeScript | Hébergée sur Render (`backend/render.yaml`) |
+| API | Node.js (22.6 ou plus, `--experimental-strip-types`), Express, TypeScript | Hébergée sur Render (`nze-backend/render.yaml`) |
 | Base de données | PostgreSQL chez Supabase | Migrations Drizzle |
 | ORM | Drizzle | Prisma écarté |
 | Authentification | Module propre : téléphone et mot de passe. Sessions avec jetons hachés. | Pas Supabase Auth |
@@ -19,7 +19,7 @@
 
 ```
 NZE/
-├── backend/                 API, base et tests
+├── nze-backend/                 API, base et tests
 │   ├── src/
 │   │   ├── app.ts, server.ts, config.ts
 │   │   ├── core/            sécurité, journalisation
@@ -29,7 +29,7 @@ NZE/
 │   │   └── realtime/        vide : à construire avec Supabase Realtime
 │   ├── tests/               tests d'intégration (node --test)
 │   └── render.yaml, drizzle.config.ts, .env.example
-├── mobile-nze/              application Expo
+├── nze-mobile/              application Expo
 │   ├── app/                 écrans (routes Expo Router)
 │   └── src/                 api, auth, components, features, hooks, i18n, lib, realtime, store, theme
 ├── docs/                    documentation (ce dossier)
@@ -73,7 +73,7 @@ Les modules retirés (restaurants, hébergements, taxi, abonnements) ne sont plu
 
 ## 4. Migrations
 
-- Une seule chaîne active : `backend/src/db/migrations`, de `0000` à `0027`.
+- Une seule chaîne active : `nze-backend/src/db/migrations`, de `0000` à `0027`.
 - Le snapshot Drizzle doit correspondre au schéma. Un test vérifie cette correspondance ; il réussit (mesure du 17 novembre 2026).
 - Toute migration nouvelle : un seul fichier numéroté, ajouté au journal, jamais de modification d'une migration déjà appliquée.
 - Aucune suppression de données sans sauvegarde et migration explicitement justifiée. Préférer l'archivage.
@@ -81,7 +81,7 @@ Les modules retirés (restaurants, hébergements, taxi, abonnements) ne sont plu
 
 ## 5. Configuration et secrets
 
-- Modèle : `backend/.env.example`. Aucune valeur réelle dans le dépôt.
+- Modèle : `nze-backend/.env.example`. Aucune valeur réelle dans le dépôt.
 - `.env` interdit dans les livrables. Les secrets sont saisis dans l'environnement Render.
 - Variables obligatoires en production : base, secrets JWT, `LEGAL_COMPANY_NAME`, `LEGAL_COMPANY_ADDRESS`, `LEGAL_CONTACT_EMAIL` (le serveur refuse de démarrer sans elles).
 - Intégrations sans clé : mode console (OTP, notifications), jamais d'envoi réel ni de paiement simulé en production.
@@ -90,10 +90,10 @@ Les modules retirés (restaurants, hébergements, taxi, abonnements) ne sont plu
 
 | Vérification | Commande | Résultat au 13 novembre 2026 |
 |---|---|---|
-| Typage backend | `npm run typecheck` (dans `backend/`) | 0 erreur |
-| Tests backend | `npm test` (dans `backend/`) | 413 tests réussis sur 413 (mesure du 19 novembre 2026, étape 20) |
-| Typage mobile | `npx tsc --noEmit` (dans `mobile-nze/`) | 0 erreur (mesure du 17 novembre 2026) |
-| Tests mobile | `npm test` (dans `mobile-nze/`) | 26 tests réussis sur 26 (mesure du 16 novembre 2026) |
+| Typage backend | `npm run typecheck` (dans `nze-backend/`) | 0 erreur |
+| Tests backend | `npm test` (dans `nze-backend/`) | 413 tests réussis sur 413 (mesure du 19 novembre 2026, étape 20) |
+| Typage mobile | `npx tsc --noEmit` (dans `nze-mobile/`) | 0 erreur (mesure du 17 novembre 2026) |
+| Tests mobile | `npm test` (dans `nze-mobile/`) | 26 tests réussis sur 26 (mesure du 16 novembre 2026) |
 
 Règle : un résultat n'est annoncé qu'après exécution. Le LIRE-MOI de chaque livraison indique la commande et le résultat exact.
 

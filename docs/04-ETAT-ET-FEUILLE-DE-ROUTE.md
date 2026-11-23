@@ -26,7 +26,7 @@ Mesures prises le 13 novembre 2026 sur l'archive « NZE 10 — design unifié »
 
 ## 2. Feuille de route
 
-**Statut au 13 novembre 2026** : étapes A, 2, B, C, D (phase 1), F closes. Étape G préparée : liste de contrôle de mise en production (`docs/LANCEMENT.md`), scripts de sauvegarde et de restauration (`backend/scripts/`), configuration de déploiement signalée (`APP_ENV` à passer à production au lancement). Historique par dossier de réclamation : endpoint et interface administrateur en place, testés. Backend 273/273 tests verts. Restent : étape E (intégrations, bloquées par les accès), location de véhicules et publicité (phase 2), décision O-12, validation juridique (O-5), relecture des traductions (O-6), tests sur téléphone et APK de preview.
+**Statut au 13 novembre 2026** : étapes A, 2, B, C, D (phase 1), F closes. Étape G préparée : liste de contrôle de mise en production (`docs/LANCEMENT.md`), scripts de sauvegarde et de restauration (`nze-backend/scripts/`), configuration de déploiement signalée (`APP_ENV` à passer à production au lancement). Historique par dossier de réclamation : endpoint et interface administrateur en place, testés. Backend 273/273 tests verts. Restent : étape E (intégrations, bloquées par les accès), location de véhicules et publicité (phase 2), décision O-12, validation juridique (O-5), relecture des traductions (O-6), tests sur téléphone et APK de preview.
 
 
 
@@ -45,7 +45,7 @@ Objectif : socle propre, sans écran exclu, typage et tests verts.
 7. Mobile : typage à zéro.
 8. Ajouter les premiers tests mobiles sur le parcours client.
 9. Confirmer par écrit le retrait de l'OTP de livraison (O-9).
-10. Réécrire les README de `backend/` et `mobile-nze/` à partir de ce dossier `docs/`.
+10. Réécrire les README de `nze-backend/` et `nze-mobile/` à partir de ce dossier `docs/`.
 
 **Critère de sortie** : `npm test` backend vert ; `tsc` mobile à zéro ; un seul zip complet et LIRE-MOI.
 
@@ -161,7 +161,7 @@ Chaque ligne a été contrôlée dans le code, pas recopiée d'un ancien documen
 | A.7 Typage à zéro | Fait : backend et mobile | `tsc --noEmit` |
 | A.8 Tests mobiles sur le parcours client | **Partiel** : 18 tests unitaires (libellés, traductions, rôles). Aucun test de parcours. | `npm test` mobile |
 | A.9 Confirmation écrite du retrait de l'OTP (O-9) | **À faire par le fondateur**. Le code OTP de livraison est retiré. | — |
-| A.10 Réécriture des README | Fait : `backend/README.md` et `mobile-nze/README.md` reflètent le code. | — |
+| A.10 Réécriture des README | Fait : `nze-backend/README.md` et `nze-mobile/README.md` reflètent le code. | — |
 
 Points de conformité corrigés dans ce lot : conditions juridiques (plus de restaurants, d'hébergeurs, de loueurs ni de rôle prestataire), type d'activité mobile limité aux trois rôles du cahier.
 
@@ -344,7 +344,7 @@ Configuration à faire dans Render : `MYPVIT_WEBHOOK_ALLOWED_IPS` = `176.31.65.1
 
 ## Mise à jour — étape 7 : iOS, voie A (17 novembre 2026)
 
-- **Fait** : SDK natif Firebase messaging installé (27.1.1) ; chemin iOS écrit dans `mobile-nze/src/lib/push.ts` (jeton FCM, permission, réenregistrement, retrait à la déconnexion, surveillance du renouvellement), désactivé par `PUSH_IOS_ACTIF = false`. Aucun changement serveur (FCM envoie déjà vers iOS).
+- **Fait** : SDK natif Firebase messaging installé (27.1.1) ; chemin iOS écrit dans `nze-mobile/src/lib/push.ts` (jeton FCM, permission, réenregistrement, retrait à la déconnexion, surveillance du renouvellement), désactivé par `PUSH_IOS_ACTIF = false`. Aucun changement serveur (FCM envoie déjà vers iOS).
 - **Mesures** : mobile typage 0 erreur, 30 réussis sur 30 ; backend inchangé (389/389).
 - **Non vérifié** : le build natif, la réception sur iPhone. Un avertissement npm `EBADENGINE` apparaît à l'installation ; à vérifier au premier build.
 - **En attente** : O-20 (GoogleService-Info.plist, clé APNs, Key ID, Team ID, confirmation du bundle `com.nze.app`) et les étapes d'activation de `LIVRAISON-ETAPE-7-IOS.md`.

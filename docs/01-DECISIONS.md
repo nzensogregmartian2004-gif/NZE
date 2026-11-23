@@ -74,7 +74,7 @@ Une règle absente de ce registre n'est pas une décision. Un point non tranché
 | D-F11 | Point fixe NZE paramétrable dans l'administration, modifiable à tout moment. | Cahier V3.0 §13.1 ; décision refonte | Active |
 | D-F12 | Stock mis à jour en temps réel par l'équipe NZE, à temps plein, pour tous les partenaires. Les partenaires signalent les variations (vente physique, rupture, retour) dans l'espace partenaire. | Cahier V3.0 §10.1 ; décision refonte | Active |
 | D-F13 | Approbation et versement des retraits : **administrateur principal uniquement** (décision du fondateur, point O-1). | Décision du fondateur (13 nov. 2026) | Active |
-| D-M5 | Permissions par module et par action (cahier V3.0 §4.2, point O-2) : matrice dans `backend/src/core/permissions.ts`. Principe retenu par le fondateur. La matrice du rôle secondaire (tout sauf les retraits) est une valeur par défaut à valider. | Décision du fondateur (13 nov. 2026) | Active. Matrice à valider. |
+| D-M5 | Permissions par module et par action (cahier V3.0 §4.2, point O-2) : matrice dans `nze-backend/src/core/permissions.ts`. Principe retenu par le fondateur. La matrice du rôle secondaire (tout sauf les retraits) est une valeur par défaut à valider. | Décision du fondateur (13 nov. 2026) | Active. Matrice à valider. |
 
 ## E. Processus de collecte, livraison et preuves
 
@@ -95,7 +95,7 @@ Une règle absente de ce registre n'est pas une décision. Un point non tranché
 | D-T2 | Authentification par le module propre à l'application (téléphone et mot de passe), pas Supabase Auth. | Décisions de stack | Active |
 | D-T3 | Médias et fichiers : Cloudflare R2. Notifications push : Firebase. | Décisions de stack | Active. Comptes et clés à fournir. |
 | D-T4 | Inscription sans code SMS. L'eSMS ne sert qu'à renouveler un mot de passe oublié. | Décisions de stack | Active. Documentation eSMS et clé de test à obtenir. |
-| D-T5 | Une seule chaîne de migrations active (`backend/src/db/migrations`). La chaîne B est archivée dans `archive-migrations-chaine-B/`. | Décision de méthode | Active |
+| D-T5 | Une seule chaîne de migrations active (`nze-backend/src/db/migrations`). La chaîne B est archivée dans `archive-migrations-chaine-B/`. | Décision de méthode | Active |
 | D-T6 | Aucun fichier `.env` ni secret dans les livrables. Les secrets sont saisis dans l'environnement d'hébergement. | Hygiène | Active |
 | D-T7 | Les intégrations externes sont derrière une configuration, avec mode console par défaut tant que les clés ne sont pas fournies. | Décision de méthode | Active |
 | D-T8 | Temps réel de la messagerie et du suivi : Supabase Realtime (voir D-A1). | D-A1 | Active. Le code temps réel n'est pas encore branché. |
