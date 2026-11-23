@@ -1,0 +1,7 @@
+node_modules
+dist
+.env
+*.log
+# Banc d'essai MyPVit : identifiants de test et rapport local, jamais versionnés
+sandbox*.env
+sandbox-rapport-mypvit.md

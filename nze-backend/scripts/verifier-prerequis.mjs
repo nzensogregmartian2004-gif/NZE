@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const RACINE = new URL('../..', import.meta.url).pathname;
-const MOBILE = join(RACINE, 'mobile-nze');
+const MOBILE = join(RACINE, 'nze-mobile');
 let manquants = 0;
 
 function ligne(etat, texte) {
@@ -39,7 +39,7 @@ if (existsSync(androidFichier)) {
   ligne(pkg === expo.android?.package ? 'ok' : 'avertir', `google-services.json présent (paquet Android ${pkg === expo.android?.package ? 'correct' : 'à vérifier'})`);
   ligne(expo.android?.googleServicesFile ? 'ok' : 'manque', 'app.json : android.googleServicesFile renseigné');
 } else {
-  ligne('manque', 'google-services.json (Android) absent de mobile-nze/');
+  ligne('manque', 'google-services.json (Android) absent de nze-mobile/');
 }
 if (existsSync(iosFichier)) {
   ligne('ok', 'GoogleService-Info.plist présent (iOS)');

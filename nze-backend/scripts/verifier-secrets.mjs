@@ -1,5 +1,5 @@
 // Recherche de secrets dans le dépôt, avec des motifs courants. Signale seulement : n'affiche jamais la valeur trouvée.
-// Usage : npm run verifier:secrets (depuis backend/). Code de sortie 1 si quelque chose est trouvé.
+// Usage : npm run verifier:secrets (depuis nze-backend/). Code de sortie 1 si quelque chose est trouvé.
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
