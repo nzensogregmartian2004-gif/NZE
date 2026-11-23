@@ -1,0 +1,10 @@
+# Dépendances et sorties de build : jamais versionnées
+node_modules/
+.expo/
+dist/
+web-build/
+*.log
+# Variables d'environnement locales : jamais versionnées
+.env
+.env.*
+!.env.example

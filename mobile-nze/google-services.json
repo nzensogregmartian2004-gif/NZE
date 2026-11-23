@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "291828413562",
+    "project_id": "nze5-a97c5",
+    "storage_bucket": "nze5-a97c5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291828413562:android:ae5b3067afb48c8d9877c3",
+        "android_client_info": {
+          "package_name": "com.nze.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh9q9SOsB-nWP9px4aGJXrik3tg3sygxI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
