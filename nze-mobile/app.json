@@ -14,8 +14,7 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.nze.app",
-      "infoPlist": {}
+      "bundleIdentifier": "com.nze.app"
     },
     "android": {
       "package": "com.nze.app",
@@ -36,16 +35,6 @@
     ],
     "experiments": {
       "typedRoutes": false
-    },
-    "extra": {
-      "router": {
-        "asyncRoutes": {
-          "web": true
-        }
-      },
-      "eas": {
-        "projectId": "d668a76a-7724-4b92-a072-cdbd220e23ce"
-      }
     }
   }
 }

@@ -48,8 +48,32 @@ const REQUIRED = [
   'MYPVIT_CODE_BALANCE',
 ];
 
+// Noms alternatifs acceptés pour les mêmes valeurs MyPVit (noms utilisés dans l'autre application du propriétaire).
+// Si le nom NZE est absent mais que le nom alternatif est renseigné, la valeur du nom alternatif est reprise.
+const NOMS_ALTERNATIFS: Record<string, string> = {
+  MYPVIT_PASSWORD: 'MYPVIT_API_PASSWORD',
+  MYPVIT_CODE_SECRET: 'MYPVIT_URLCODE_RENEW_SECRET',
+  MYPVIT_CODE_PAYMENT: 'MYPVIT_URLCODE_REST',
+  MYPVIT_CODE_LINK: 'MYPVIT_URLCODE_LINK',
+  MYPVIT_CODE_STATUS: 'MYPVIT_URLCODE_STATUS',
+  MYPVIT_CODE_FEES: 'MYPVIT_URLCODE_GET_FEES',
+  MYPVIT_CODE_COUNTRIES: 'MYPVIT_URLCODE_GET_COUNTRIES',
+  MYPVIT_CODE_OPERATORS: 'MYPVIT_URLCODE_GET_OPERATORS',
+  MYPVIT_CODE_QRCODE: 'MYPVIT_URLCODE_QR_CODE',
+  MYPVIT_CODE_BALANCE: 'MYPVIT_URLCODE_BALANCE',
+};
+
+function resoudreNomsAlternatifs(brut: Record<string, string | undefined>): Record<string, string | undefined> {
+  const env = { ...brut };
+  for (const [nom, alternatif] of Object.entries(NOMS_ALTERNATIFS)) {
+    if (!env[nom] && env[alternatif]) env[nom] = env[alternatif];
+  }
+  return env;
+}
+
 // Ne liste que les NOMS des variables manquantes, jamais leurs valeurs.
-export function loadMyPvitConfig(env: Record<string, string | undefined>): MyPvitConfig {
+export function loadMyPvitConfig(brut: Record<string, string | undefined>): MyPvitConfig {
+  const env = resoudreNomsAlternatifs(brut);
   const missing = REQUIRED.filter((key) => !env[key]);
   if (!env.MYPVIT_OPERATION_ACCOUNT_CODE && !env.MYPVIT_OPERATION_ACCOUNT_CODE_AIRTEL && !env.MYPVIT_OPERATION_ACCOUNT_CODE_MOOV && !env.MYPVIT_OPERATION_ACCOUNT_CODE_CARD) {
     missing.push('MYPVIT_OPERATION_ACCOUNT_CODE (au moins un compte)');
