@@ -13,7 +13,7 @@ import { runMigrations } from '../src/db/migrate.ts';
 import { loadMyPvitConfig, MyPvitClient } from '../src/modules/paiements/providers/mypvit/index.ts';
 import type { OtpSender } from '../src/modules/auth/otp-sender.ts';
 import { creerAdministrateur } from '../src/modules/auth/service.ts';
-import { GoogleMapsClient } from '../src/modules/cartographie/index.ts';
+import { MapboxClient } from '../src/modules/cartographie/index.ts';
 import { distanceMetres } from '../src/modules/livraisons/pricing.ts';
 import { createServer, type AddressInfo } from 'node:net';
 
@@ -243,27 +243,25 @@ export function fakeGoogleMaps() {
     statutElement: 'OK' as string,
     reseauCoupe: false,
     appels: [] as string[],
+    requetes: [] as { url: string }[],
   };
   const json = (body: unknown, status = 200): Response =>
     new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
   const fetchImpl = async (input: string | URL): Promise<Response> => {
     const url = new URL(String(input));
     state.appels.push(url.toString());
+    state.requetes.push({ url: url.toString() });
     if (state.reseauCoupe) throw new TypeError('fetch failed');
-    if (state.statutGlobal !== 'OK') return json({ status: state.statutGlobal, rows: [], error_message: 'refusé' });
-    const [la1, lo1] = (url.searchParams.get('origins') ?? '').split(',').map(Number);
-    const [la2, lo2] = (url.searchParams.get('destinations') ?? '').split(',').map(Number);
-    const element =
-      state.statutElement === 'OK'
-        ? {
-            status: 'OK',
-            distance: { value: state.distanceM ?? distanceMetres({ latitude: la1, longitude: lo1 }, { latitude: la2, longitude: lo2 }) },
-            duration: { value: state.dureeS },
-          }
-        : { status: state.statutElement };
-    return json({ status: 'OK', rows: [{ elements: [element] }] });
+    if (state.statutGlobal !== 'OK') return json({ message: 'Not Authorized - Invalid Token' }, 401);
+    const paires = (url.pathname.split('/').pop() ?? '').split(';').map((p) => p.split(',').map(Number));
+    const [lon1, lat1] = paires[0];
+    const [lon2, lat2] = paires[1];
+    const trouve = state.statutElement === 'OK';
+    const d = trouve ? (state.distanceM ?? distanceMetres({ latitude: lat1, longitude: lon1 }, { latitude: lat2, longitude: lon2 })) : null;
+    const t = trouve ? state.dureeS : null;
+    return json({ code: 'Ok', durations: [[0, t], [t, 0]], distances: [[0, d], [d, 0]] });
   };
-  const client = new GoogleMapsClient({ cle: CLE_GOOGLE_TEST, fetch: fetchImpl });
+  const client = new MapboxClient({ cle: CLE_GOOGLE_TEST, fetch: fetchImpl });
   return { client, state };
 }
 

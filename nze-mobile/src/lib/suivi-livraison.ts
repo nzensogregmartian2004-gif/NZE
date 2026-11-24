@@ -5,6 +5,18 @@ export interface LivraisonClient {
   statut: string;
   positionMiseAJourLe: string | null;
   distanceRestanteMetres: number | null;
+  livreur: { latitude: number; longitude: number } | null;
+  destination: { latitude: number; longitude: number } | null;
+}
+
+// Une position du livreur reste « récente » pendant 2 minutes après sa dernière transmission.
+const SEUIL_FRAICHEUR_MS = 2 * 60 * 1000;
+
+export function fraicheurPosition(positionMiseAJourLe: string | null, maintenant: Date): { etat: 'RECENTE' | 'ANCIENNE' | 'INCONNUE'; minutes: number } {
+  if (!positionMiseAJourLe) return { etat: 'INCONNUE', minutes: 0 };
+  const ecart = maintenant.getTime() - new Date(positionMiseAJourLe).getTime();
+  if (Number.isNaN(ecart)) return { etat: 'INCONNUE', minutes: 0 };
+  return { etat: ecart <= SEUIL_FRAICHEUR_MS ? 'RECENTE' : 'ANCIENNE', minutes: Math.max(0, Math.round(ecart / 60000)) };
 }
 
 // Distance à partir de laquelle le livreur est « proche » : au-delà, la barre progresse lentement.

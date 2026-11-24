@@ -15,7 +15,7 @@ function ligne(etat, texte) {
 
 console.log('Serveur — variables d’environnement (noms seulement) :');
 const requises = [
-  'DATABASE_URL', 'SESSION_SECRET', 'APP_ENV', 'GOOGLE_MAPS_API_KEY',
+  'DATABASE_URL', 'SESSION_SECRET', 'APP_ENV', 'MAPBOX_ACCESS_TOKEN',
   'MYPVIT_BASE_URL', 'MYPVIT_AGENT', 'MYPVIT_PRODUCT', 'MYPVIT_PASSWORD', 'MYPVIT_CODE_SECRET',
   'MYPVIT_CALLBACK_URL_CODE', 'MYPVIT_RECEPTION_URL_CODE', 'MYPVIT_CODE_PAYMENT', 'MYPVIT_CODE_LINK',
   'MYPVIT_CODE_STATUS', 'MYPVIT_CODE_FEES', 'MYPVIT_CODE_BALANCE', 'MYPVIT_CODE_COUNTRIES', 'MYPVIT_CODE_OPERATORS',
@@ -25,8 +25,8 @@ for (const nom of requises) ligne(process.env[nom] ? 'ok' : 'manque', nom);
 ligne(process.env.MYPVIT_WEBHOOK_ALLOWED_IPS ? 'ok' : 'manque', 'MYPVIT_WEBHOOK_ALLOWED_IPS (obligatoire en production)');
 ligne(process.env.MYPVIT_OPERATION_ACCOUNT_CODE_CARD ? 'ok' : 'optionnel', 'MYPVIT_OPERATION_ACCOUNT_CODE_CARD (carte fermée, O-18)');
 ligne(process.env.FIREBASE_SERVICE_ACCOUNT_JSON ? 'ok' : 'optionnel', 'FIREBASE_SERVICE_ACCOUNT_JSON (push, O-19)');
-const carte = process.env.CARTOGRAPHIE ?? 'google';
-if (process.env.APP_ENV === 'production' && carte !== 'google') ligne('manque', 'CARTOGRAPHIE doit valoir google en production');
+const carte = process.env.CARTOGRAPHIE ?? 'mapbox';
+if (process.env.APP_ENV === 'production' && carte === 'estimation') ligne('manque', 'CARTOGRAPHIE=estimation interdit en production');
 else ligne('ok', `CARTOGRAPHIE = ${carte === 'google' ? 'google' : carte}`);
 
 console.log('\nApplication — Firebase (fichiers et configuration) :');

@@ -49,5 +49,7 @@ test('le client voit l’état de sa livraison ; la position n’est pas transmi
   const apres = await api(ctx, 'GET', `/commandes/${commandeId}`, { token: client.token });
   assert.notEqual(apres.body.livraison.positionMiseAJourLe, null, 'la position transmise est visible du client');
   assert.ok('distanceRestanteMetres' in apres.body.livraison);
+  assert.deepEqual(apres.body.livraison.livreur, { latitude: 0.39, longitude: 9.454 }, 'la carte client reçoit la position du livreur');
+  assert.ok('destination' in apres.body.livraison);
   await api(ctx, 'PUT', '/admin/reglages/suivi-gps', { token: admin.token, body: { actif: false } });
 });

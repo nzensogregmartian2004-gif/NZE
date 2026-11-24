@@ -7,6 +7,7 @@ import { appeler, ApiError } from '../../src/api/client';
 import { useI18n } from '../../src/i18n';
 import type { Cle } from '../../src/i18n/dictionnaire';
 import { Bouton, Carte, Champ, Ecran, Message } from '../../src/components/ui';
+import { CarteLivraison } from '../../src/components/CarteLivraison';
 import { couleurs, espaces, rayons } from '../../src/theme';
 
 interface Ligne { id: string; nomArticle: string; quantiteDemandee: number; quantiteLivree: number | null }
@@ -27,6 +28,7 @@ export default function DetailLivraison() {
   const [commentaire, setCommentaire] = useState('');
   const [motif, setMotif] = useState<(typeof MOTIFS)[number]>('CLIENT_ABSENT');
   const [message, setMessage] = useState<{ texte: string; type: 'erreur' | 'succes' } | null>(null);
+  const [positionLivreur, setPositionLivreur] = useState<{ latitude: number; longitude: number } | null>(null);
 
   const charger = useCallback(() => {
     appeler<Livraison>(`/livreur/livraisons/${id}`).then((l) => {
@@ -43,6 +45,7 @@ export default function DetailLivraison() {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') return;
       const p = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+      setPositionLivreur({ latitude: p.coords.latitude, longitude: p.coords.longitude });
       await appeler(`/livreur/livraisons/${id}/position`, { methode: 'POST', corps: { latitude: p.coords.latitude, longitude: p.coords.longitude } }).catch(() => undefined);
     };
     envoyer();
@@ -95,9 +98,9 @@ export default function DetailLivraison() {
                   <Text style={styles.lien}>{t('livreur.appeler')} · {d.clientTelephone}</Text>
                 </Pressable>
               )}
-              <Pressable onPress={() => Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${d.latitude},${d.longitude}`)} accessibilityRole="button">
-                <Text style={styles.lien}>{t('livreur.itineraire')}</Text>
-              </Pressable>
+              {d.latitude !== null && d.longitude !== null ? (
+                <CarteLivraison destination={{ latitude: d.latitude, longitude: d.longitude }} livreur={positionLivreur} />
+              ) : null}
             </Carte>
           )}
 

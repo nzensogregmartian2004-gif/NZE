@@ -182,6 +182,8 @@ export async function lireCommande(db: Db, user: AuthUser, id: string) {
     ? {
         statut: l.statut,
         positionMiseAJourLe: l.livreurPositionLe,
+        livreur: l.livreurLatitude !== null && l.livreurLongitude !== null ? { latitude: l.livreurLatitude, longitude: l.livreurLongitude } : null,
+        destination: l.latitude !== null && l.longitude !== null ? { latitude: l.latitude, longitude: l.longitude } : null,
         distanceRestanteMetres:
           l.livreurLatitude !== null && l.livreurLongitude !== null && l.latitude !== null && l.longitude !== null
             ? Math.round(distanceMetres({ latitude: l.livreurLatitude, longitude: l.livreurLongitude }, { latitude: l.latitude, longitude: l.longitude }))

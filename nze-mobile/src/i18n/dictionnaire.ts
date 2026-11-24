@@ -5,6 +5,8 @@ export const LANGUES: Langue[] = ['fr', 'en', 'ar', 'zh-Hans'];
 
 export const dictionnaire = {
   fr: {
+    'livraison.suivi.fraicheurRecente': 'Position du livreur mise à jour il y a {m} min',
+    'livraison.suivi.fraicheurAncienne': 'Position ancienne : le livreur ne transmet plus sa position',
     'livraison.suivi.titre': 'Suivi de votre livraison',
     'livraison.suivi.distance': 'Votre livreur est à {m} m',
     'livraison.suivi.attente': 'Position du livreur indisponible pour l’instant.',
@@ -559,6 +561,8 @@ export const dictionnaire = {
     'reclamation.admin.vide': "Aucune réclamation pour ce filtre.",
   },
   en: {
+    'livraison.suivi.fraicheurRecente': 'Courier position updated {m} min ago',
+    'livraison.suivi.fraicheurAncienne': 'Old position: the courier is no longer sharing location',
     'livraison.suivi.titre': 'Your delivery tracking',
     'livraison.suivi.distance': 'Your courier is {m} m away',
     'livraison.suivi.attente': 'Courier position unavailable for now.',
@@ -1113,6 +1117,8 @@ export const dictionnaire = {
     'reclamation.admin.vide': "No claims for this filter.",
   },
   ar: {
+    'livraison.suivi.fraicheurRecente': 'تم تحديث موقع المندوب قبل {m} د',
+    'livraison.suivi.fraicheurAncienne': 'موقع قديم: المندوب لم يعد يرسل موقعه',
     'livraison.suivi.titre': 'تتبع توصيلك',
     'livraison.suivi.distance': 'المندوب على بعد {m} م',
     'livraison.suivi.attente': 'موقع المندوب غير متاح حاليًا.',
@@ -1667,6 +1673,8 @@ export const dictionnaire = {
     'reclamation.admin.vide': "لا توجد شكاوى لهذا الفلتر.",
   },
   'zh-Hans': {
+    'livraison.suivi.fraicheurRecente': '配送员位置 {m} 分钟前更新',
+    'livraison.suivi.fraicheurAncienne': '位置较旧：配送员已停止发送位置',
     'livraison.suivi.titre': '您的配送跟踪',
     'livraison.suivi.distance': '配送员距离您 {m} 米',
     'livraison.suivi.attente': '暂时无法获取配送员位置。',

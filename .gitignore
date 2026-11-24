@@ -1,6 +1,0 @@
-# Racine du dépôt : sorties locales et secrets, jamais versionnés
-node_modules/
-**/node_modules/
-.env
-**/.env
-*.log

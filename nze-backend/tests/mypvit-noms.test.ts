@@ -1,5 +1,5 @@
 // Les valeurs MyPVit sont acceptées sous les noms NZE ou sous les noms alternatifs de l'autre application.
-// Seuls MYPVIT_AGENT et MYPVIT_PRODUCT restent obligatoires tant qu'ils ne sont pas renseignés.
+// Agent et produit ont des valeurs par défaut, remplaçables par MYPVIT_AGENT et MYPVIT_PRODUCT.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { loadMyPvitConfig } from '../src/modules/paiements/providers/mypvit/config.ts';
@@ -22,20 +22,27 @@ const valeursAutreApplication = {
   MYPVIT_URLCODE_BALANCE: 'code-solde',
 };
 
-test('sans agent ni produit, le démarrage signale seulement ces deux noms', () => {
-  assert.throws(() => loadMyPvitConfig(valeursAutreApplication), /MYPVIT_AGENT, MYPVIT_PRODUCT/);
+test('sans agent ni produit, les valeurs de l’application qui fonctionne sont reprises', () => {
+  const cfg = loadMyPvitConfig(valeursAutreApplication);
+  assert.equal(cfg.agent, 'AIFI-APP');
+  assert.equal(cfg.product, 'AIFI');
 });
 
 test('les valeurs sous les noms de l’autre application sont reprises', () => {
-  const cfg = loadMyPvitConfig({ ...valeursAutreApplication, MYPVIT_AGENT: 'NZE-APP', MYPVIT_PRODUCT: 'NZE' });
+  const cfg = loadMyPvitConfig(valeursAutreApplication);
   assert.equal(cfg.password, 'mot-de-passe');
   assert.equal(cfg.codes.payment, 'code-paiement');
   assert.equal(cfg.codes.secret, 'code-secret');
   assert.equal(cfg.codes.balance, 'code-solde');
+});
+
+test('MYPVIT_AGENT et MYPVIT_PRODUCT renseignés remplacent les valeurs par défaut', () => {
+  const cfg = loadMyPvitConfig({ ...valeursAutreApplication, MYPVIT_AGENT: 'NZE-APP', MYPVIT_PRODUCT: 'NZE' });
   assert.equal(cfg.agent, 'NZE-APP');
+  assert.equal(cfg.product, 'NZE');
 });
 
 test('un nom NZE déjà renseigné est prioritaire sur le nom alternatif', () => {
-  const cfg = loadMyPvitConfig({ ...valeursAutreApplication, MYPVIT_AGENT: 'NZE-APP', MYPVIT_PRODUCT: 'NZE', MYPVIT_PASSWORD: 'nouveau' });
+  const cfg = loadMyPvitConfig({ ...valeursAutreApplication, MYPVIT_PASSWORD: 'nouveau' });
   assert.equal(cfg.password, 'nouveau');
 });

@@ -4,7 +4,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { appeler } from '../api/client';
 import { useI18n } from '../i18n';
 import { CLES_SUIVI } from '../lib/suivi-commande';
-import { avancement, type LivraisonClient } from '../lib/suivi-livraison';
+import { avancement, fraicheurPosition, type LivraisonClient } from '../lib/suivi-livraison';
+import { CarteLivraison } from './CarteLivraison';
 import { couleurs } from '../theme';
 
 const INTERVALLE_MS = 20000;
@@ -35,6 +36,7 @@ export function SuiviLivraison({ commandeId }: { commandeId: string }) {
   if (!suivi) return null;
   const distance = livraison?.distanceRestanteMetres ?? null;
   const fraction = avancement(suivi, distance);
+  const fraicheur = livraison?.livreur ? fraicheurPosition(livraison.positionMiseAJourLe, new Date()) : null;
 
   return (
     <View style={styles.bloc}>
@@ -45,6 +47,11 @@ export function SuiviLivraison({ commandeId }: { commandeId: string }) {
       <Text style={styles.etape}>{t(CLES_SUIVI[suivi])}</Text>
       {suivi === 'EN_LIVRAISON' && distance !== null ? <Text style={styles.detail}>{t('livraison.suivi.distance', { m: distance })}</Text> : null}
       {suivi === 'EN_LIVRAISON' && distance === null ? <Text style={styles.detail}>{t('livraison.suivi.attente')}</Text> : null}
+      {fraicheur?.etat === 'RECENTE' ? <Text style={styles.detail}>{t('livraison.suivi.fraicheurRecente', { m: fraicheur.minutes })}</Text> : null}
+      {fraicheur?.etat === 'ANCIENNE' ? <Text style={styles.detail}>{t('livraison.suivi.fraicheurAncienne')}</Text> : null}
+      {suivi === 'EN_LIVRAISON' && livraison?.destination ? (
+        <CarteLivraison destination={livraison.destination} livreur={livraison.livreur} />
+      ) : null}
     </View>
   );
 }

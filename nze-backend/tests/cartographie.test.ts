@@ -38,17 +38,16 @@ const commander = (reception = 'LIVRAISON') =>
   });
 const nbCommandes = async () => (await base.pool.query('select count(*)::int as n from commandes where user_id = $1', [client.id])).rows[0].n as number;
 
-test('Google reçoit le départ, la destination, le mode voiture, la langue française et la clé serveur', async () => {
+test('Mapbox reçoit le départ, la destination en longitude,latitude, le profil voiture et le jeton serveur', async () => {
   reinitialiser();
-  const avant = ctx.gmaps.state.appels.length;
+  const avant = ctx.gmaps.state.requetes.length;
   assert.equal((await commander()).status, 201);
-  const url = new URL(ctx.gmaps.state.appels[avant]);
-  assert.match(url.searchParams.get('origins') ?? '', /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/);
-  assert.equal(url.searchParams.get('destinations'), `${POSITION.latitude},${POSITION.longitude}`);
-  assert.equal(url.searchParams.get('mode'), 'driving');
-  assert.equal(url.searchParams.get('language'), 'fr');
-  assert.equal(url.searchParams.get('units'), 'metric');
-  assert.equal(url.searchParams.get('key'), CLE_GOOGLE_TEST);
+  const url = new URL(ctx.gmaps.state.requetes[avant].url);
+  assert.ok(url.pathname.startsWith('/directions-matrix/v1/mapbox/driving/'), url.pathname);
+  const paires = (url.pathname.split('/').pop() ?? '').split(';');
+  assert.equal(paires[1], `${POSITION.longitude},${POSITION.latitude}`);
+  assert.equal(url.searchParams.get('access_token'), CLE_GOOGLE_TEST);
+  assert.equal(url.searchParams.get('annotations'), 'distance,duration');
 });
 
 test('la distance routière de Google est celle de la commande, avec son fournisseur et sa date de calcul', async () => {
@@ -60,7 +59,7 @@ test('la distance routière de Google est celle de la commande, avec son fournis
   assert.equal(r.body.fraisLivraisonFcfa, 1297);
   const { rows } = await base.pool.query('select distance_m, fournisseur_distance, distance_calculee_le from commandes where id = $1', [r.body.id]);
   assert.equal(rows[0].distance_m, 4321);
-  assert.equal(rows[0].fournisseur_distance, 'GOOGLE_MAPS');
+  assert.equal(rows[0].fournisseur_distance, 'MAPBOX');
   assert.ok(rows[0].distance_calculee_le instanceof Date);
 });
 
@@ -115,12 +114,12 @@ test('au paiement, les frais sont recalculés sur la distance routière du momen
   const { rows } = await base.pool.query('select frais_livraison_fcfa, distance_m, fournisseur_distance from commandes where id = $1', [c.body.id]);
   assert.equal(rows[0].distance_m, 9000);
   assert.equal(rows[0].frais_livraison_fcfa, 2700);
-  assert.equal(rows[0].fournisseur_distance, 'GOOGLE_MAPS');
+  assert.equal(rows[0].fournisseur_distance, 'MAPBOX');
 });
 
-test('la configuration refuse l’estimation en production et exige la clé Google', () => {
+test('la configuration refuse l’estimation en production et exige le jeton Mapbox', () => {
   assert.throws(() => chargerCartographie({ CARTOGRAPHIE: 'estimation' }, 'production'), /interdit en production/);
-  assert.throws(() => chargerCartographie({ CARTOGRAPHIE: 'google' }, 'development'), /GOOGLE_MAPS_API_KEY requis/);
+  assert.throws(() => chargerCartographie({ CARTOGRAPHIE: 'mapbox' }, 'development'), /MAPBOX_ACCESS_TOKEN requis/);
   assert.equal(chargerCartographie({ CARTOGRAPHIE: 'estimation' }, 'development').fournisseur, 'ESTIMATION_VOL_OISEAU');
-  assert.equal(chargerCartographie({ CARTOGRAPHIE: 'google', GOOGLE_MAPS_API_KEY: 'cle' }, 'production').fournisseur, 'GOOGLE_MAPS');
+  assert.equal(chargerCartographie({ MAPBOX_ACCESS_TOKEN: 'jeton' }, 'production').fournisseur, 'MAPBOX');
 });

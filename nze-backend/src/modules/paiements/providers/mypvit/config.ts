@@ -34,8 +34,6 @@ export interface MyPvitConfig {
 
 const REQUIRED = [
   'MYPVIT_PASSWORD',
-  'MYPVIT_AGENT',
-  'MYPVIT_PRODUCT',
   'MYPVIT_CALLBACK_URL_CODE',
   'MYPVIT_CODE_SECRET',
   'MYPVIT_CODE_PAYMENT',
@@ -47,6 +45,11 @@ const REQUIRED = [
   'MYPVIT_CODE_QRCODE',
   'MYPVIT_CODE_BALANCE',
 ];
+
+// Agent et produit envoyés à MyPVit : valeurs reprises de l'application qui fonctionne actuellement.
+// Elles peuvent être remplacées par MYPVIT_AGENT et MYPVIT_PRODUCT dans Render (à demander à MyPVit pour NZE avant la production).
+const AGENT_PAR_DEFAUT = 'AIFI-APP';
+const PRODUIT_PAR_DEFAUT = 'AIFI';
 
 // Noms alternatifs acceptés pour les mêmes valeurs MyPVit (noms utilisés dans l'autre application du propriétaire).
 // Si le nom NZE est absent mais que le nom alternatif est renseigné, la valeur du nom alternatif est reprise.
@@ -103,8 +106,8 @@ export function loadMyPvitConfig(brut: Record<string, string | undefined>): MyPv
     receptionUrlCode: env.MYPVIT_RECEPTION_URL_CODE || null,
     webhookAllowedIps: (env.MYPVIT_WEBHOOK_ALLOWED_IPS ?? '').split(',').map((ip) => ip.trim()).filter(Boolean),
     password: v('MYPVIT_PASSWORD'),
-    agent: v('MYPVIT_AGENT'),
-    product: v('MYPVIT_PRODUCT'),
+    agent: env.MYPVIT_AGENT || AGENT_PAR_DEFAUT,
+    product: env.MYPVIT_PRODUCT || PRODUIT_PAR_DEFAUT,
     callbackUrlCode: v('MYPVIT_CALLBACK_URL_CODE'),
     codes: {
       secret: v('MYPVIT_CODE_SECRET'),
