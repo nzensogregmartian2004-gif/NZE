@@ -1,0 +1,5192 @@
+{
+  "id": "b5c2674e-c2c8-4215-befe-237e0d054c15",
+  "prevId": "d32044a0-cbae-40bf-9e2e-35ec96eaad35",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.adresses": {
+      "name": "adresses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "libelle": {
+          "name": "libelle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quartier": {
+          "name": "quartier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "repere": {
+          "name": "repere",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "batiment": {
+          "name": "batiment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "etage": {
+          "name": "etage",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "instructions": {
+          "name": "instructions",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "photo_cle": {
+          "name": "photo_cle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "adresses_user_idx": {
+          "name": "adresses_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "adresses_user_id_users_id_fk": {
+          "name": "adresses_user_id_users_id_fk",
+          "tableFrom": "adresses",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.affectations_versement": {
+      "name": "affectations_versement",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "versement_id": {
+          "name": "versement_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "echeance_id": {
+          "name": "echeance_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "penalite_id": {
+          "name": "penalite_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "montant_fcfa": {
+          "name": "montant_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "affectations_versement_versement_id_versements_echelonnes_id_fk": {
+          "name": "affectations_versement_versement_id_versements_echelonnes_id_fk",
+          "tableFrom": "affectations_versement",
+          "tableTo": "versements_echelonnes",
+          "columnsFrom": [
+            "versement_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "affectations_versement_echeance_id_echeances_mois_id_fk": {
+          "name": "affectations_versement_echeance_id_echeances_mois_id_fk",
+          "tableFrom": "affectations_versement",
+          "tableTo": "echeances_mois",
+          "columnsFrom": [
+            "echeance_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "affectations_versement_penalite_id_penalites_echeancier_id_fk": {
+          "name": "affectations_versement_penalite_id_penalites_echeancier_id_fk",
+          "tableFrom": "affectations_versement",
+          "tableTo": "penalites_echeancier",
+          "columnsFrom": [
+            "penalite_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "affectation_cible_chk": {
+          "name": "affectation_cible_chk",
+          "value": "(\"affectations_versement\".\"echeance_id\" is null) <> (\"affectations_versement\".\"penalite_id\" is null)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.appareils_push": {
+      "name": "appareils_push",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "jeton": {
+          "name": "jeton",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plateforme": {
+          "name": "plateforme",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "mis_a_jour_le": {
+          "name": "mis_a_jour_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "appareils_push_user_idx": {
+          "name": "appareils_push_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "appareils_push_user_id_users_id_fk": {
+          "name": "appareils_push_user_id_users_id_fk",
+          "tableFrom": "appareils_push",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "appareils_push_jeton_unique": {
+          "name": "appareils_push_jeton_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "jeton"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "appareil_plateforme_chk": {
+          "name": "appareil_plateforme_chk",
+          "value": "\"appareils_push\".\"plateforme\" in ('android','ios')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.bordereaux": {
+      "name": "bordereaux",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "numero": {
+          "name": "numero",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "bordereaux_numero_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "entreprise_id": {
+          "name": "entreprise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "etablissement_id": {
+          "name": "etablissement_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "collecteur_id": {
+          "name": "collecteur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commentaire": {
+          "name": "commentaire",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "partenaire_confirme_par": {
+          "name": "partenaire_confirme_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "partenaire_confirme_le": {
+          "name": "partenaire_confirme_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "conteste_par": {
+          "name": "conteste_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "conteste_le": {
+          "name": "conteste_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motif_contestation": {
+          "name": "motif_contestation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "valide_par": {
+          "name": "valide_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "valide_le": {
+          "name": "valide_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motif_refus": {
+          "name": "motif_refus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "bordereaux_entreprise_idx": {
+          "name": "bordereaux_entreprise_idx",
+          "columns": [
+            {
+              "expression": "entreprise_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "bordereaux_collecteur_idx": {
+          "name": "bordereaux_collecteur_idx",
+          "columns": [
+            {
+              "expression": "collecteur_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "bordereaux_entreprise_id_entreprises_id_fk": {
+          "name": "bordereaux_entreprise_id_entreprises_id_fk",
+          "tableFrom": "bordereaux",
+          "tableTo": "entreprises",
+          "columnsFrom": [
+            "entreprise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "bordereaux_etablissement_id_etablissements_id_fk": {
+          "name": "bordereaux_etablissement_id_etablissements_id_fk",
+          "tableFrom": "bordereaux",
+          "tableTo": "etablissements",
+          "columnsFrom": [
+            "etablissement_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "bordereaux_collecteur_id_users_id_fk": {
+          "name": "bordereaux_collecteur_id_users_id_fk",
+          "tableFrom": "bordereaux",
+          "tableTo": "users",
+          "columnsFrom": [
+            "collecteur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "bordereaux_partenaire_confirme_par_users_id_fk": {
+          "name": "bordereaux_partenaire_confirme_par_users_id_fk",
+          "tableFrom": "bordereaux",
+          "tableTo": "users",
+          "columnsFrom": [
+            "partenaire_confirme_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "bordereaux_conteste_par_users_id_fk": {
+          "name": "bordereaux_conteste_par_users_id_fk",
+          "tableFrom": "bordereaux",
+          "tableTo": "users",
+          "columnsFrom": [
+            "conteste_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "bordereaux_valide_par_users_id_fk": {
+          "name": "bordereaux_valide_par_users_id_fk",
+          "tableFrom": "bordereaux",
+          "tableTo": "users",
+          "columnsFrom": [
+            "valide_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "bordereaux_statut_chk": {
+          "name": "bordereaux_statut_chk",
+          "value": "\"bordereaux\".\"statut\" in ('ATTENTE_PARTENAIRE','ATTENTE_VALIDATION_NZE','CONTESTE','VALIDE','REFUSE','ANNULE')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.categories": {
+      "name": "categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "nom": {
+          "name": "nom",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "categories_slug_unique": {
+          "name": "categories_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.commandes": {
+      "name": "commandes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "reference": {
+          "name": "reference",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PANIER'"
+        },
+        "reception": {
+          "name": "reception",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "point_fixe_id": {
+          "name": "point_fixe_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tarif_id": {
+          "name": "tarif_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "distance_m": {
+          "name": "distance_m",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fournisseur_distance": {
+          "name": "fournisseur_distance",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "distance_calculee_le": {
+          "name": "distance_calculee_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "frais_livraison_fcfa": {
+          "name": "frais_livraison_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "sous_total_fcfa": {
+          "name": "sous_total_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_fcfa": {
+          "name": "total_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "paye_le": {
+          "name": "paye_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "choix_sur_place": {
+          "name": "choix_sur_place",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "stock_statut": {
+          "name": "stock_statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AUCUN'"
+        },
+        "etape_preparation": {
+          "name": "etape_preparation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "origine_latitude": {
+          "name": "origine_latitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "origine_longitude": {
+          "name": "origine_longitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "commandes_user_id_users_id_fk": {
+          "name": "commandes_user_id_users_id_fk",
+          "tableFrom": "commandes",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "commandes_point_fixe_id_points_fixes_id_fk": {
+          "name": "commandes_point_fixe_id_points_fixes_id_fk",
+          "tableFrom": "commandes",
+          "tableTo": "points_fixes",
+          "columnsFrom": [
+            "point_fixe_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "commandes_tarif_id_tarifs_livraison_id_fk": {
+          "name": "commandes_tarif_id_tarifs_livraison_id_fk",
+          "tableFrom": "commandes",
+          "tableTo": "tarifs_livraison",
+          "columnsFrom": [
+            "tarif_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "commandes_reference_unique": {
+          "name": "commandes_reference_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "reference"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "commande_statut_chk": {
+          "name": "commande_statut_chk",
+          "value": "\"commandes\".\"statut\" in ('PANIER','EN_ATTENTE_PAIEMENT','PAYEE','ECHEC','ANNULEE')"
+        },
+        "commande_reception_chk": {
+          "name": "commande_reception_chk",
+          "value": "\"commandes\".\"reception\" in ('LIVRAISON','RETRAIT')"
+        },
+        "commande_total_chk": {
+          "name": "commande_total_chk",
+          "value": "\"commandes\".\"total_fcfa\" >= 0"
+        },
+        "commande_stock_statut_chk": {
+          "name": "commande_stock_statut_chk",
+          "value": "\"commandes\".\"stock_statut\" in ('AUCUN','RESERVE','VENDU','LIBERE')"
+        },
+        "commande_etape_preparation_chk": {
+          "name": "commande_etape_preparation_chk",
+          "value": "\"commandes\".\"etape_preparation\" is null or \"commandes\".\"etape_preparation\" in ('EN_PREPARATION','PRETE')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.commissions_regles": {
+      "name": "commissions_regles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "entreprise_id": {
+          "name": "entreprise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "taux_bps": {
+          "name": "taux_bps",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "effet_debut": {
+          "name": "effet_debut",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_fin": {
+          "name": "date_fin",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "duree_mois": {
+          "name": "duree_mois",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "conditions": {
+          "name": "conditions",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "document_url": {
+          "name": "document_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "commissions_regles_entreprise_id_entreprises_id_fk": {
+          "name": "commissions_regles_entreprise_id_entreprises_id_fk",
+          "tableFrom": "commissions_regles",
+          "tableTo": "entreprises",
+          "columnsFrom": [
+            "entreprise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "commission_taux_chk": {
+          "name": "commission_taux_chk",
+          "value": "\"commissions_regles\".\"taux_bps\" >= 0 and \"commissions_regles\".\"taux_bps\" <= 10000"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.conversations": {
+      "name": "conversations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "produit_id": {
+          "name": "produit_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "masquee_pour_client_le": {
+          "name": "masquee_pour_client_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "archivee_le": {
+          "name": "archivee_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "conversations_user_produit_idx": {
+          "name": "conversations_user_produit_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "produit_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"conversations\".\"masquee_pour_client_le\" is null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "conversations_user_id_users_id_fk": {
+          "name": "conversations_user_id_users_id_fk",
+          "tableFrom": "conversations",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "conversations_produit_id_produits_id_fk": {
+          "name": "conversations_produit_id_produits_id_fk",
+          "tableFrom": "conversations",
+          "tableTo": "produits",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.demandes_prestataire": {
+      "name": "demandes_prestataire",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "fiche_id": {
+          "name": "fiche_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "client_id": {
+          "name": "client_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "motif": {
+          "name": "motif",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'NOUVELLE'"
+        },
+        "note_nze": {
+          "name": "note_nze",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "traitee_le": {
+          "name": "traitee_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "traitee_par": {
+          "name": "traitee_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "demandes_prestataire_fiche_id_fiches_prestataires_id_fk": {
+          "name": "demandes_prestataire_fiche_id_fiches_prestataires_id_fk",
+          "tableFrom": "demandes_prestataire",
+          "tableTo": "fiches_prestataires",
+          "columnsFrom": [
+            "fiche_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "demandes_prestataire_client_id_users_id_fk": {
+          "name": "demandes_prestataire_client_id_users_id_fk",
+          "tableFrom": "demandes_prestataire",
+          "tableTo": "users",
+          "columnsFrom": [
+            "client_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "demandes_prestataire_traitee_par_users_id_fk": {
+          "name": "demandes_prestataire_traitee_par_users_id_fk",
+          "tableFrom": "demandes_prestataire",
+          "tableTo": "users",
+          "columnsFrom": [
+            "traitee_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "demandes_prestataire_statut_chk": {
+          "name": "demandes_prestataire_statut_chk",
+          "value": "\"demandes_prestataire\".\"statut\" in ('NOUVELLE','TRAITEE','CLOTUREE')"
+        },
+        "demandes_prestataire_motif_chk": {
+          "name": "demandes_prestataire_motif_chk",
+          "value": "\"demandes_prestataire\".\"motif\" in ('INFORMATION','DEVIS','AUTRE')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.demandes_retrait": {
+      "name": "demandes_retrait",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "entreprise_id": {
+          "name": "entreprise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "demandeur_id": {
+          "name": "demandeur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "montant_fcfa": {
+          "name": "montant_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "operateur": {
+          "name": "operateur",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "numero": {
+          "name": "numero",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nom_beneficiaire": {
+          "name": "nom_beneficiaire",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'EN_ATTENTE'"
+        },
+        "reference_marchand": {
+          "name": "reference_marchand",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reference_fournisseur": {
+          "name": "reference_fournisseur",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decide_par": {
+          "name": "decide_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decide_le": {
+          "name": "decide_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dernier_controle": {
+          "name": "dernier_controle",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "demandes_retrait_entreprise_id_entreprises_id_fk": {
+          "name": "demandes_retrait_entreprise_id_entreprises_id_fk",
+          "tableFrom": "demandes_retrait",
+          "tableTo": "entreprises",
+          "columnsFrom": [
+            "entreprise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "demandes_retrait_demandeur_id_users_id_fk": {
+          "name": "demandes_retrait_demandeur_id_users_id_fk",
+          "tableFrom": "demandes_retrait",
+          "tableTo": "users",
+          "columnsFrom": [
+            "demandeur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "demandes_retrait_decide_par_users_id_fk": {
+          "name": "demandes_retrait_decide_par_users_id_fk",
+          "tableFrom": "demandes_retrait",
+          "tableTo": "users",
+          "columnsFrom": [
+            "decide_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "demandes_retrait_reference_marchand_unique": {
+          "name": "demandes_retrait_reference_marchand_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "reference_marchand"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "retrait_montant_chk": {
+          "name": "retrait_montant_chk",
+          "value": "\"demandes_retrait\".\"montant_fcfa\" > 0"
+        },
+        "retrait_operateur_chk": {
+          "name": "retrait_operateur_chk",
+          "value": "\"demandes_retrait\".\"operateur\" in ('AIRTEL_MONEY','MOOV_MONEY','CARTE')"
+        },
+        "retrait_numero_chk": {
+          "name": "retrait_numero_chk",
+          "value": "\"demandes_retrait\".\"operateur\" = 'CARTE' or \"demandes_retrait\".\"numero\" is not null"
+        },
+        "retrait_statut_chk": {
+          "name": "retrait_statut_chk",
+          "value": "\"demandes_retrait\".\"statut\" in ('EN_ATTENTE','REJETEE','VERSEMENT_EN_COURS','VERSEE','ECHEC')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.echeances_mois": {
+      "name": "echeances_mois",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "echeancier_id": {
+          "name": "echeancier_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "numero": {
+          "name": "numero",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "montant_du_fcfa": {
+          "name": "montant_du_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "montant_paye_fcfa": {
+          "name": "montant_paye_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "date_limite": {
+          "name": "date_limite",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "echeances_mois_echeancier_id_echeanciers_articles_id_fk": {
+          "name": "echeances_mois_echeancier_id_echeanciers_articles_id_fk",
+          "tableFrom": "echeances_mois",
+          "tableTo": "echeanciers_articles",
+          "columnsFrom": [
+            "echeancier_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "echeance_mois_chk": {
+          "name": "echeance_mois_chk",
+          "value": "\"echeances_mois\".\"numero\" >= 1 and \"echeances_mois\".\"montant_du_fcfa\" >= 0 and \"echeances_mois\".\"montant_paye_fcfa\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.echeanciers_articles": {
+      "name": "echeanciers_articles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "plan_id": {
+          "name": "plan_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ligne_id": {
+          "name": "ligne_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "produit_id": {
+          "name": "produit_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prix_fcfa": {
+          "name": "prix_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "avance_pourcent": {
+          "name": "avance_pourcent",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "avance_fcfa": {
+          "name": "avance_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reste_fcfa": {
+          "name": "reste_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duree_mois": {
+          "name": "duree_mois",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mensualite_fcfa": {
+          "name": "mensualite_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dernier_mois_fcfa": {
+          "name": "dernier_mois_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "echeanciers_articles_plan_id_plans_echelonnes_id_fk": {
+          "name": "echeanciers_articles_plan_id_plans_echelonnes_id_fk",
+          "tableFrom": "echeanciers_articles",
+          "tableTo": "plans_echelonnes",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "echeanciers_articles_ligne_id_lignes_commande_id_fk": {
+          "name": "echeanciers_articles_ligne_id_lignes_commande_id_fk",
+          "tableFrom": "echeanciers_articles",
+          "tableTo": "lignes_commande",
+          "columnsFrom": [
+            "ligne_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "echeanciers_articles_produit_id_produits_id_fk": {
+          "name": "echeanciers_articles_produit_id_produits_id_fk",
+          "tableFrom": "echeanciers_articles",
+          "tableTo": "produits",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "echeancier_duree_chk": {
+          "name": "echeancier_duree_chk",
+          "value": "\"echeanciers_articles\".\"duree_mois\" between 1 and 12"
+        },
+        "echeancier_avance_chk": {
+          "name": "echeancier_avance_chk",
+          "value": "\"echeanciers_articles\".\"avance_pourcent\" between 10 and 90"
+        },
+        "echeancier_somme_chk": {
+          "name": "echeancier_somme_chk",
+          "value": "\"echeanciers_articles\".\"avance_fcfa\" + \"echeanciers_articles\".\"reste_fcfa\" = \"echeanciers_articles\".\"prix_fcfa\""
+        },
+        "echeancier_mois_chk": {
+          "name": "echeancier_mois_chk",
+          "value": "(\"echeanciers_articles\".\"duree_mois\" - 1) * \"echeanciers_articles\".\"mensualite_fcfa\" + \"echeanciers_articles\".\"dernier_mois_fcfa\" = \"echeanciers_articles\".\"reste_fcfa\""
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.ecritures": {
+      "name": "ecritures",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "commande_id": {
+          "name": "commande_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ligne_id": {
+          "name": "ligne_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "entreprise_id": {
+          "name": "entreprise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "categorie": {
+          "name": "categorie",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "registre": {
+          "name": "registre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PARTENAIRE'"
+        },
+        "montant_fcfa": {
+          "name": "montant_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "ecritures_entreprise_idx": {
+          "name": "ecritures_entreprise_idx",
+          "columns": [
+            {
+              "expression": "entreprise_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ecritures_commande_id_commandes_id_fk": {
+          "name": "ecritures_commande_id_commandes_id_fk",
+          "tableFrom": "ecritures",
+          "tableTo": "commandes",
+          "columnsFrom": [
+            "commande_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "ecritures_ligne_id_lignes_commande_id_fk": {
+          "name": "ecritures_ligne_id_lignes_commande_id_fk",
+          "tableFrom": "ecritures",
+          "tableTo": "lignes_commande",
+          "columnsFrom": [
+            "ligne_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "ecritures_entreprise_id_entreprises_id_fk": {
+          "name": "ecritures_entreprise_id_entreprises_id_fk",
+          "tableFrom": "ecritures",
+          "tableTo": "entreprises",
+          "columnsFrom": [
+            "entreprise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ecriture_categorie_chk": {
+          "name": "ecriture_categorie_chk",
+          "value": "\"ecritures\".\"categorie\" in ('VENTE_NET','COMMISSION','FRAIS_LIVRAISON','ENCAISSEMENT')"
+        },
+        "ecriture_registre_chk": {
+          "name": "ecriture_registre_chk",
+          "value": "\"ecritures\".\"registre\" in ('CLIENT','COMMISSIONS','PARTENAIRE')"
+        },
+        "ecriture_montant_chk": {
+          "name": "ecriture_montant_chk",
+          "value": "\"ecritures\".\"montant_fcfa\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.entreprises": {
+      "name": "entreprises",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "nom": {
+          "name": "nom",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut_partenariat": {
+          "name": "statut_partenariat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'prospect'"
+        },
+        "nom_officiel": {
+          "name": "nom_officiel",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "responsable_nom": {
+          "name": "responsable_nom",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "responsable_role": {
+          "name": "responsable_role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "responsable_telephone": {
+          "name": "responsable_telephone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telephone": {
+          "name": "telephone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.etablissements": {
+      "name": "etablissements",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "entreprise_id": {
+          "name": "entreprise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nom": {
+          "name": "nom",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "adresse": {
+          "name": "adresse",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "etablissements_entreprise_id_entreprises_id_fk": {
+          "name": "etablissements_entreprise_id_entreprises_id_fk",
+          "tableFrom": "etablissements",
+          "tableTo": "entreprises",
+          "columnsFrom": [
+            "entreprise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.fiches_prestataires": {
+      "name": "fiches_prestataires",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "nom_public": {
+          "name": "nom_public",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "activite": {
+          "name": "activite",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "zone": {
+          "name": "zone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "photo_cle": {
+          "name": "photo_cle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'BROUILLON'"
+        },
+        "ordre": {
+          "name": "ordre",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "fiches_prestataires_statut_chk": {
+          "name": "fiches_prestataires_statut_chk",
+          "value": "\"fiches_prestataires\".\"statut\" in ('BROUILLON','PUBLIEE','SUSPENDUE')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.journal_audit": {
+      "name": "journal_audit",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "acteur_id": {
+          "name": "acteur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "action": {
+          "name": "action",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cible_type": {
+          "name": "cible_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cible_id": {
+          "name": "cible_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "details": {
+          "name": "details",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "journal_audit_created_idx": {
+          "name": "journal_audit_created_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "journal_audit_action_idx": {
+          "name": "journal_audit_action_idx",
+          "columns": [
+            {
+              "expression": "action",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "journal_audit_acteur_id_users_id_fk": {
+          "name": "journal_audit_acteur_id_users_id_fk",
+          "tableFrom": "journal_audit",
+          "tableTo": "users",
+          "columnsFrom": [
+            "acteur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.lignes_bordereau": {
+      "name": "lignes_bordereau",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "bordereau_id": {
+          "name": "bordereau_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "produit_id": {
+          "name": "produit_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ligne_commande_id": {
+          "name": "ligne_commande_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nom_article": {
+          "name": "nom_article",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantite": {
+          "name": "quantite",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "etat": {
+          "name": "etat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "accessoires": {
+          "name": "accessoires",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "test_effectue": {
+          "name": "test_effectue",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "resultat_test": {
+          "name": "resultat_test",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "controle": {
+          "name": "controle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commentaire": {
+          "name": "commentaire",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bloque_livraison": {
+          "name": "bloque_livraison",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "motif_levee": {
+          "name": "motif_levee",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "lignes_bordereau_bordereau_idx": {
+          "name": "lignes_bordereau_bordereau_idx",
+          "columns": [
+            {
+              "expression": "bordereau_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "lignes_bordereau_produit_idx": {
+          "name": "lignes_bordereau_produit_idx",
+          "columns": [
+            {
+              "expression": "produit_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "lignes_bordereau_bordereau_id_bordereaux_id_fk": {
+          "name": "lignes_bordereau_bordereau_id_bordereaux_id_fk",
+          "tableFrom": "lignes_bordereau",
+          "tableTo": "bordereaux",
+          "columnsFrom": [
+            "bordereau_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lignes_bordereau_produit_id_produits_id_fk": {
+          "name": "lignes_bordereau_produit_id_produits_id_fk",
+          "tableFrom": "lignes_bordereau",
+          "tableTo": "produits",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lignes_bordereau_ligne_commande_id_lignes_commande_id_fk": {
+          "name": "lignes_bordereau_ligne_commande_id_lignes_commande_id_fk",
+          "tableFrom": "lignes_bordereau",
+          "tableTo": "lignes_commande",
+          "columnsFrom": [
+            "ligne_commande_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "lignes_bordereau_quantite_chk": {
+          "name": "lignes_bordereau_quantite_chk",
+          "value": "\"lignes_bordereau\".\"quantite\" > 0"
+        },
+        "lignes_bordereau_controle_chk": {
+          "name": "lignes_bordereau_controle_chk",
+          "value": "\"lignes_bordereau\".\"controle\" in ('CONFORME','ANOMALIE')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.lignes_commande": {
+      "name": "lignes_commande",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "commande_id": {
+          "name": "commande_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "produit_id": {
+          "name": "produit_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entreprise_id": {
+          "name": "entreprise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantite": {
+          "name": "quantite",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prix_unitaire_fcfa": {
+          "name": "prix_unitaire_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "montant_ligne_fcfa": {
+          "name": "montant_ligne_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "taux_commission_bps": {
+          "name": "taux_commission_bps",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commission_fcfa": {
+          "name": "commission_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "garantie_jours": {
+          "name": "garantie_jours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "lignes_commande_commande_id_commandes_id_fk": {
+          "name": "lignes_commande_commande_id_commandes_id_fk",
+          "tableFrom": "lignes_commande",
+          "tableTo": "commandes",
+          "columnsFrom": [
+            "commande_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lignes_commande_produit_id_produits_id_fk": {
+          "name": "lignes_commande_produit_id_produits_id_fk",
+          "tableFrom": "lignes_commande",
+          "tableTo": "produits",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lignes_commande_entreprise_id_entreprises_id_fk": {
+          "name": "lignes_commande_entreprise_id_entreprises_id_fk",
+          "tableFrom": "lignes_commande",
+          "tableTo": "entreprises",
+          "columnsFrom": [
+            "entreprise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ligne_quantite_chk": {
+          "name": "ligne_quantite_chk",
+          "value": "\"lignes_commande\".\"quantite\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.lignes_livraison": {
+      "name": "lignes_livraison",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "livraison_id": {
+          "name": "livraison_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ligne_commande_id": {
+          "name": "ligne_commande_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "produit_id": {
+          "name": "produit_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nom_article": {
+          "name": "nom_article",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantite_demandee": {
+          "name": "quantite_demandee",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantite_livree": {
+          "name": "quantite_livree",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "statut_ligne": {
+          "name": "statut_ligne",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'EN_ATTENTE'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "lignes_livraison_livraison_idx": {
+          "name": "lignes_livraison_livraison_idx",
+          "columns": [
+            {
+              "expression": "livraison_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "lignes_livraison_ligne_commande_idx": {
+          "name": "lignes_livraison_ligne_commande_idx",
+          "columns": [
+            {
+              "expression": "ligne_commande_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "lignes_livraison_livraison_id_livraisons_id_fk": {
+          "name": "lignes_livraison_livraison_id_livraisons_id_fk",
+          "tableFrom": "lignes_livraison",
+          "tableTo": "livraisons",
+          "columnsFrom": [
+            "livraison_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lignes_livraison_ligne_commande_id_lignes_commande_id_fk": {
+          "name": "lignes_livraison_ligne_commande_id_lignes_commande_id_fk",
+          "tableFrom": "lignes_livraison",
+          "tableTo": "lignes_commande",
+          "columnsFrom": [
+            "ligne_commande_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "lignes_livraison_produit_id_produits_id_fk": {
+          "name": "lignes_livraison_produit_id_produits_id_fk",
+          "tableFrom": "lignes_livraison",
+          "tableTo": "produits",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "lignes_livraison_demandee_chk": {
+          "name": "lignes_livraison_demandee_chk",
+          "value": "\"lignes_livraison\".\"quantite_demandee\" > 0"
+        },
+        "lignes_livraison_livree_chk": {
+          "name": "lignes_livraison_livree_chk",
+          "value": "\"lignes_livraison\".\"quantite_livree\" >= 0 and \"lignes_livraison\".\"quantite_livree\" <= \"lignes_livraison\".\"quantite_demandee\""
+        },
+        "lignes_livraison_statut_chk": {
+          "name": "lignes_livraison_statut_chk",
+          "value": "\"lignes_livraison\".\"statut_ligne\" in ('EN_ATTENTE','LIVREE','PARTIELLE','NON_LIVREE')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.listes_envies": {
+      "name": "listes_envies",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "produit_id": {
+          "name": "produit_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "listes_envies_user_produit_idx": {
+          "name": "listes_envies_user_produit_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "produit_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "listes_envies_user_id_users_id_fk": {
+          "name": "listes_envies_user_id_users_id_fk",
+          "tableFrom": "listes_envies",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "listes_envies_produit_id_produits_id_fk": {
+          "name": "listes_envies_produit_id_produits_id_fk",
+          "tableFrom": "listes_envies",
+          "tableTo": "produits",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.litiges_partenaire": {
+      "name": "litiges_partenaire",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "numero": {
+          "name": "numero",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "litiges_partenaire_numero_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "entreprise_id": {
+          "name": "entreprise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reclamation_id": {
+          "name": "reclamation_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motif": {
+          "name": "motif",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'OUVERT'"
+        },
+        "priorite": {
+          "name": "priorite",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'NORMALE'"
+        },
+        "responsable_id": {
+          "name": "responsable_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ouvert_par": {
+          "name": "ouvert_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "issue": {
+          "name": "issue",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cloture_le": {
+          "name": "cloture_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cloture_par": {
+          "name": "cloture_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "litiges_partenaire_entreprise_idx": {
+          "name": "litiges_partenaire_entreprise_idx",
+          "columns": [
+            {
+              "expression": "entreprise_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "litiges_partenaire_reclamation_idx": {
+          "name": "litiges_partenaire_reclamation_idx",
+          "columns": [
+            {
+              "expression": "reclamation_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "litiges_partenaire_entreprise_id_entreprises_id_fk": {
+          "name": "litiges_partenaire_entreprise_id_entreprises_id_fk",
+          "tableFrom": "litiges_partenaire",
+          "tableTo": "entreprises",
+          "columnsFrom": [
+            "entreprise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "litiges_partenaire_reclamation_id_reclamations_id_fk": {
+          "name": "litiges_partenaire_reclamation_id_reclamations_id_fk",
+          "tableFrom": "litiges_partenaire",
+          "tableTo": "reclamations",
+          "columnsFrom": [
+            "reclamation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "litiges_partenaire_responsable_id_users_id_fk": {
+          "name": "litiges_partenaire_responsable_id_users_id_fk",
+          "tableFrom": "litiges_partenaire",
+          "tableTo": "users",
+          "columnsFrom": [
+            "responsable_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "litiges_partenaire_ouvert_par_users_id_fk": {
+          "name": "litiges_partenaire_ouvert_par_users_id_fk",
+          "tableFrom": "litiges_partenaire",
+          "tableTo": "users",
+          "columnsFrom": [
+            "ouvert_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "litiges_partenaire_cloture_par_users_id_fk": {
+          "name": "litiges_partenaire_cloture_par_users_id_fk",
+          "tableFrom": "litiges_partenaire",
+          "tableTo": "users",
+          "columnsFrom": [
+            "cloture_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "litiges_partenaire_statut_chk": {
+          "name": "litiges_partenaire_statut_chk",
+          "value": "\"litiges_partenaire\".\"statut\" in ('OUVERT','CLOS')"
+        },
+        "litiges_partenaire_priorite_chk": {
+          "name": "litiges_partenaire_priorite_chk",
+          "value": "\"litiges_partenaire\".\"priorite\" in ('BASSE','NORMALE','HAUTE','URGENTE')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.livraisons": {
+      "name": "livraisons",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "numero": {
+          "name": "numero",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "livraisons_numero_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "commande_id": {
+          "name": "commande_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "livreur_id": {
+          "name": "livreur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "assignee_par": {
+          "name": "assignee_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "motif": {
+          "name": "motif",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "signature_papier_recue": {
+          "name": "signature_papier_recue",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "motif_echec": {
+          "name": "motif_echec",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "commentaire": {
+          "name": "commentaire",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "livreur_latitude": {
+          "name": "livreur_latitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "livreur_longitude": {
+          "name": "livreur_longitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "livreur_position_le": {
+          "name": "livreur_position_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arrive_le": {
+          "name": "arrive_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "demarree_le": {
+          "name": "demarree_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cloturee_le": {
+          "name": "cloturee_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "livraisons_commande_idx": {
+          "name": "livraisons_commande_idx",
+          "columns": [
+            {
+              "expression": "commande_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "livraisons_livreur_idx": {
+          "name": "livraisons_livreur_idx",
+          "columns": [
+            {
+              "expression": "livreur_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "livraisons_commande_id_commandes_id_fk": {
+          "name": "livraisons_commande_id_commandes_id_fk",
+          "tableFrom": "livraisons",
+          "tableTo": "commandes",
+          "columnsFrom": [
+            "commande_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "livraisons_livreur_id_users_id_fk": {
+          "name": "livraisons_livreur_id_users_id_fk",
+          "tableFrom": "livraisons",
+          "tableTo": "users",
+          "columnsFrom": [
+            "livreur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "livraisons_assignee_par_users_id_fk": {
+          "name": "livraisons_assignee_par_users_id_fk",
+          "tableFrom": "livraisons",
+          "tableTo": "users",
+          "columnsFrom": [
+            "assignee_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "livraisons_motif_chk": {
+          "name": "livraisons_motif_chk",
+          "value": "\"livraisons\".\"motif\" in ('LIVRAISON_COMMANDE','NOUVELLE_TENTATIVE','SECONDE_LIVRAISON')"
+        },
+        "livraisons_statut_chk": {
+          "name": "livraisons_statut_chk",
+          "value": "\"livraisons\".\"statut\" in ('ASSIGNEE','EN_ROUTE','ARRIVE','LIVREE','PARTIELLE','ECHEC')"
+        },
+        "livraisons_motif_echec_chk": {
+          "name": "livraisons_motif_echec_chk",
+          "value": "\"livraisons\".\"motif_echec\" is null or \"livraisons\".\"motif_echec\" in ('CLIENT_ABSENT','REFUS_CLIENT','ADRESSE_INTROUVABLE','AUTRE')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.messages": {
+      "name": "messages",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "conversation_id": {
+          "name": "conversation_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expediteur_id": {
+          "name": "expediteur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "genre": {
+          "name": "genre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "corps": {
+          "name": "corps",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fichier_cle": {
+          "name": "fichier_cle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "duree_sec": {
+          "name": "duree_sec",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "messages_conversation_id_conversations_id_fk": {
+          "name": "messages_conversation_id_conversations_id_fk",
+          "tableFrom": "messages",
+          "tableTo": "conversations",
+          "columnsFrom": [
+            "conversation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "messages_expediteur_id_users_id_fk": {
+          "name": "messages_expediteur_id_users_id_fk",
+          "tableFrom": "messages",
+          "tableTo": "users",
+          "columnsFrom": [
+            "expediteur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "message_genre_chk": {
+          "name": "message_genre_chk",
+          "value": "\"messages\".\"genre\" in ('TEXTE','PHOTO','VIDEO','VOCAL')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.mouvements_stock": {
+      "name": "mouvements_stock",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "produit_id": {
+          "name": "produit_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "delta_disponible": {
+          "name": "delta_disponible",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "delta_reserve": {
+          "name": "delta_reserve",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "disponible_apres": {
+          "name": "disponible_apres",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reserve_apres": {
+          "name": "reserve_apres",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commande_id": {
+          "name": "commande_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "acteur_id": {
+          "name": "acteur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motif": {
+          "name": "motif",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bordereau_id": {
+          "name": "bordereau_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "mouvements_stock_produit_id_produits_id_fk": {
+          "name": "mouvements_stock_produit_id_produits_id_fk",
+          "tableFrom": "mouvements_stock",
+          "tableTo": "produits",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "mouvements_stock_acteur_id_users_id_fk": {
+          "name": "mouvements_stock_acteur_id_users_id_fk",
+          "tableFrom": "mouvements_stock",
+          "tableTo": "users",
+          "columnsFrom": [
+            "acteur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "mouvements_stock_bordereau_id_bordereaux_id_fk": {
+          "name": "mouvements_stock_bordereau_id_bordereaux_id_fk",
+          "tableFrom": "mouvements_stock",
+          "tableTo": "bordereaux",
+          "columnsFrom": [
+            "bordereau_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.notifications": {
+      "name": "notifications",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "destinataire_id": {
+          "name": "destinataire_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "titre": {
+          "name": "titre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cible_type": {
+          "name": "cible_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cible_id": {
+          "name": "cible_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lue_le": {
+          "name": "lue_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "poussee_le": {
+          "name": "poussee_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "notifications_destinataire_idx": {
+          "name": "notifications_destinataire_idx",
+          "columns": [
+            {
+              "expression": "destinataire_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "notifications_destinataire_id_users_id_fk": {
+          "name": "notifications_destinataire_id_users_id_fk",
+          "tableFrom": "notifications",
+          "tableTo": "users",
+          "columnsFrom": [
+            "destinataire_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.otp_codes": {
+      "name": "otp_codes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "telephone": {
+          "name": "telephone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_hash": {
+          "name": "code_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tentatives": {
+          "name": "tentatives",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip": {
+          "name": "ip",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "otp_telephone_idx": {
+          "name": "otp_telephone_idx",
+          "columns": [
+            {
+              "expression": "telephone",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "otp_ip_idx": {
+          "name": "otp_ip_idx",
+          "columns": [
+            {
+              "expression": "ip",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.penalites_echeancier": {
+      "name": "penalites_echeancier",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "echeancier_id": {
+          "name": "echeancier_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mois_retard": {
+          "name": "mois_retard",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "montant_fcfa": {
+          "name": "montant_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "montant_paye_fcfa": {
+          "name": "montant_paye_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "appliquee_le": {
+          "name": "appliquee_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "penalites_echeancier_echeancier_id_echeanciers_articles_id_fk": {
+          "name": "penalites_echeancier_echeancier_id_echeanciers_articles_id_fk",
+          "tableFrom": "penalites_echeancier",
+          "tableTo": "echeanciers_articles",
+          "columnsFrom": [
+            "echeancier_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "penalite_chk": {
+          "name": "penalite_chk",
+          "value": "\"penalites_echeancier\".\"mois_retard\" >= 1 and \"penalites_echeancier\".\"montant_fcfa\" >= 0 and \"penalites_echeancier\".\"montant_paye_fcfa\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.plans_echelonnes": {
+      "name": "plans_echelonnes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "commande_id": {
+          "name": "commande_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "client_id": {
+          "name": "client_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entreprise_id": {
+          "name": "entreprise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_fcfa": {
+          "name": "total_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "avance_fcfa": {
+          "name": "avance_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reste_fcfa": {
+          "name": "reste_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mensualite_fcfa": {
+          "name": "mensualite_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nombre_articles": {
+          "name": "nombre_articles",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commercant_total_fcfa": {
+          "name": "commercant_total_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commission_total_fcfa": {
+          "name": "commission_total_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "livraison_total_fcfa": {
+          "name": "livraison_total_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_debut": {
+          "name": "date_debut",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motif_annulation": {
+          "name": "motif_annulation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "plans_client_idx": {
+          "name": "plans_client_idx",
+          "columns": [
+            {
+              "expression": "client_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "plans_entreprise_idx": {
+          "name": "plans_entreprise_idx",
+          "columns": [
+            {
+              "expression": "entreprise_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "plans_echelonnes_commande_id_commandes_id_fk": {
+          "name": "plans_echelonnes_commande_id_commandes_id_fk",
+          "tableFrom": "plans_echelonnes",
+          "tableTo": "commandes",
+          "columnsFrom": [
+            "commande_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plans_echelonnes_client_id_users_id_fk": {
+          "name": "plans_echelonnes_client_id_users_id_fk",
+          "tableFrom": "plans_echelonnes",
+          "tableTo": "users",
+          "columnsFrom": [
+            "client_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plans_echelonnes_entreprise_id_entreprises_id_fk": {
+          "name": "plans_echelonnes_entreprise_id_entreprises_id_fk",
+          "tableFrom": "plans_echelonnes",
+          "tableTo": "entreprises",
+          "columnsFrom": [
+            "entreprise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "plans_echelonnes_commande_id_unique": {
+          "name": "plans_echelonnes_commande_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "commande_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "plans_statut_chk": {
+          "name": "plans_statut_chk",
+          "value": "\"plans_echelonnes\".\"statut\" in ('PROPOSE','ACTIF','SOLDE','ANNULE')"
+        },
+        "plans_montants_chk": {
+          "name": "plans_montants_chk",
+          "value": "\"plans_echelonnes\".\"total_fcfa\" > 0 and \"plans_echelonnes\".\"reste_fcfa\" > 0 and \"plans_echelonnes\".\"mensualite_fcfa\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.points_fixes": {
+      "name": "points_fixes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "libelle": {
+          "name": "libelle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "effet_debut": {
+          "name": "effet_debut",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.produits": {
+      "name": "produits",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "entreprise_id": {
+          "name": "entreprise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "etablissement_id": {
+          "name": "etablissement_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "categorie_id": {
+          "name": "categorie_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nom": {
+          "name": "nom",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prix_fcfa": {
+          "name": "prix_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PUBLIE'"
+        },
+        "garantie_jours": {
+          "name": "garantie_jours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "echelonnable": {
+          "name": "echelonnable",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "duree_mois": {
+          "name": "duree_mois",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avance_pourcent": {
+          "name": "avance_pourcent",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "caracteristiques": {
+          "name": "caracteristiques",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "photos": {
+          "name": "photos",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "commentaires": {
+          "name": "commentaires",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "produits_entreprise_id_entreprises_id_fk": {
+          "name": "produits_entreprise_id_entreprises_id_fk",
+          "tableFrom": "produits",
+          "tableTo": "entreprises",
+          "columnsFrom": [
+            "entreprise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "produits_etablissement_id_etablissements_id_fk": {
+          "name": "produits_etablissement_id_etablissements_id_fk",
+          "tableFrom": "produits",
+          "tableTo": "etablissements",
+          "columnsFrom": [
+            "etablissement_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "produits_categorie_id_categories_id_fk": {
+          "name": "produits_categorie_id_categories_id_fk",
+          "tableFrom": "produits",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categorie_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "produits_prix_chk": {
+          "name": "produits_prix_chk",
+          "value": "\"produits\".\"prix_fcfa\" > 0"
+        },
+        "produits_statut_chk": {
+          "name": "produits_statut_chk",
+          "value": "\"produits\".\"statut\" in ('BROUILLON','PUBLIE','SUSPENDU')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.promotions": {
+      "name": "promotions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "produit_id": {
+          "name": "produit_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "titre": {
+          "name": "titre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pourcentage": {
+          "name": "pourcentage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "debut": {
+          "name": "debut",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fin": {
+          "name": "fin",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "promotions_fin_idx": {
+          "name": "promotions_fin_idx",
+          "columns": [
+            {
+              "expression": "fin",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "promotions_produit_id_produits_id_fk": {
+          "name": "promotions_produit_id_produits_id_fk",
+          "tableFrom": "promotions",
+          "tableTo": "produits",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "promotions_pourcentage_chk": {
+          "name": "promotions_pourcentage_chk",
+          "value": "\"promotions\".\"pourcentage\" between 1 and 90"
+        },
+        "promotions_dates_chk": {
+          "name": "promotions_dates_chk",
+          "value": "\"promotions\".\"fin\" > \"promotions\".\"debut\""
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.reclamations": {
+      "name": "reclamations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "numero": {
+          "name": "numero",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "reclamations_numero_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "client_id": {
+          "name": "client_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commande_id": {
+          "name": "commande_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ligne_commande_id": {
+          "name": "ligne_commande_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "produit_id": {
+          "name": "produit_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nom_article": {
+          "name": "nom_article",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "motif": {
+          "name": "motif",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'OUVERTE'"
+        },
+        "echeance_decision_le": {
+          "name": "echeance_decision_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "solution": {
+          "name": "solution",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motif_decision": {
+          "name": "motif_decision",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decide_par": {
+          "name": "decide_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decide_le": {
+          "name": "decide_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cloture_le": {
+          "name": "cloture_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "responsable_id": {
+          "name": "responsable_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "priorite": {
+          "name": "priorite",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'NORMALE'"
+        },
+        "alerte_retard_le": {
+          "name": "alerte_retard_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "reclamations_ligne_idx": {
+          "name": "reclamations_ligne_idx",
+          "columns": [
+            {
+              "expression": "ligne_commande_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "reclamations_client_idx": {
+          "name": "reclamations_client_idx",
+          "columns": [
+            {
+              "expression": "client_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "reclamations_client_id_users_id_fk": {
+          "name": "reclamations_client_id_users_id_fk",
+          "tableFrom": "reclamations",
+          "tableTo": "users",
+          "columnsFrom": [
+            "client_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "reclamations_commande_id_commandes_id_fk": {
+          "name": "reclamations_commande_id_commandes_id_fk",
+          "tableFrom": "reclamations",
+          "tableTo": "commandes",
+          "columnsFrom": [
+            "commande_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "reclamations_ligne_commande_id_lignes_commande_id_fk": {
+          "name": "reclamations_ligne_commande_id_lignes_commande_id_fk",
+          "tableFrom": "reclamations",
+          "tableTo": "lignes_commande",
+          "columnsFrom": [
+            "ligne_commande_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "reclamations_produit_id_produits_id_fk": {
+          "name": "reclamations_produit_id_produits_id_fk",
+          "tableFrom": "reclamations",
+          "tableTo": "produits",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "reclamations_decide_par_users_id_fk": {
+          "name": "reclamations_decide_par_users_id_fk",
+          "tableFrom": "reclamations",
+          "tableTo": "users",
+          "columnsFrom": [
+            "decide_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "reclamations_responsable_id_users_id_fk": {
+          "name": "reclamations_responsable_id_users_id_fk",
+          "tableFrom": "reclamations",
+          "tableTo": "users",
+          "columnsFrom": [
+            "responsable_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "reclamations_priorite_chk": {
+          "name": "reclamations_priorite_chk",
+          "value": "\"reclamations\".\"priorite\" in ('BASSE','NORMALE','HAUTE','URGENTE')"
+        },
+        "reclamations_motif_chk": {
+          "name": "reclamations_motif_chk",
+          "value": "\"reclamations\".\"motif\" in ('ARTICLE_DEFECTUEUX','NON_CONFORME','DOMMAGE_LIVRAISON','ARTICLE_MANQUANT','AUTRE')"
+        },
+        "reclamations_statut_chk": {
+          "name": "reclamations_statut_chk",
+          "value": "\"reclamations\".\"statut\" in ('OUVERTE','ACCEPTEE','REFUSEE','CLOTUREE')"
+        },
+        "reclamations_solution_chk": {
+          "name": "reclamations_solution_chk",
+          "value": "\"reclamations\".\"solution\" is null or \"reclamations\".\"solution\" in ('REPARATION','REMPLACEMENT','RETOUR','REMBOURSEMENT','AUTRE')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.reclamations_notes": {
+      "name": "reclamations_notes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "reclamation_id": {
+          "name": "reclamation_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "auteur_id": {
+          "name": "auteur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "texte": {
+          "name": "texte",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "reclamations_notes_reclamation_idx": {
+          "name": "reclamations_notes_reclamation_idx",
+          "columns": [
+            {
+              "expression": "reclamation_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "reclamations_notes_reclamation_id_reclamations_id_fk": {
+          "name": "reclamations_notes_reclamation_id_reclamations_id_fk",
+          "tableFrom": "reclamations_notes",
+          "tableTo": "reclamations",
+          "columnsFrom": [
+            "reclamation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "reclamations_notes_auteur_id_users_id_fk": {
+          "name": "reclamations_notes_auteur_id_users_id_fk",
+          "tableFrom": "reclamations_notes",
+          "tableTo": "users",
+          "columnsFrom": [
+            "auteur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.reglages": {
+      "name": "reglages",
+      "schema": "",
+      "columns": {
+        "cle": {
+          "name": "cle",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "valeur": {
+          "name": "valeur",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "acteur_id": {
+          "name": "acteur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mis_a_jour_le": {
+          "name": "mis_a_jour_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "reglages_acteur_id_users_id_fk": {
+          "name": "reglages_acteur_id_users_id_fk",
+          "tableFrom": "reglages",
+          "tableTo": "users",
+          "columnsFrom": [
+            "acteur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.sessions": {
+      "name": "sessions",
+      "schema": "",
+      "columns": {
+        "token_hash": {
+          "name": "token_hash",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "sessions_user_idx": {
+          "name": "sessions_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "sessions_user_id_users_id_fk": {
+          "name": "sessions_user_id_users_id_fk",
+          "tableFrom": "sessions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.signalements_stock": {
+      "name": "signalements_stock",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "produit_id": {
+          "name": "produit_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entreprise_id": {
+          "name": "entreprise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "acteur_id": {
+          "name": "acteur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "genre": {
+          "name": "genre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantite": {
+          "name": "quantite",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'EN_ATTENTE'"
+        },
+        "decide_par": {
+          "name": "decide_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decide_le": {
+          "name": "decide_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "signalements_stock_produit_id_produits_id_fk": {
+          "name": "signalements_stock_produit_id_produits_id_fk",
+          "tableFrom": "signalements_stock",
+          "tableTo": "produits",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "signalements_stock_entreprise_id_entreprises_id_fk": {
+          "name": "signalements_stock_entreprise_id_entreprises_id_fk",
+          "tableFrom": "signalements_stock",
+          "tableTo": "entreprises",
+          "columnsFrom": [
+            "entreprise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "signalements_stock_acteur_id_users_id_fk": {
+          "name": "signalements_stock_acteur_id_users_id_fk",
+          "tableFrom": "signalements_stock",
+          "tableTo": "users",
+          "columnsFrom": [
+            "acteur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "signalements_stock_decide_par_users_id_fk": {
+          "name": "signalements_stock_decide_par_users_id_fk",
+          "tableFrom": "signalements_stock",
+          "tableTo": "users",
+          "columnsFrom": [
+            "decide_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "signalement_genre_chk": {
+          "name": "signalement_genre_chk",
+          "value": "\"signalements_stock\".\"genre\" in ('VENTE','RUPTURE','RETOUR','VARIATION')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.stock_niveaux": {
+      "name": "stock_niveaux",
+      "schema": "",
+      "columns": {
+        "produit_id": {
+          "name": "produit_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "disponible": {
+          "name": "disponible",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "reserve": {
+          "name": "reserve",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "etat": {
+          "name": "etat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'DISPONIBLE'"
+        },
+        "mis_a_jour": {
+          "name": "mis_a_jour",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "stock_niveaux_produit_id_produits_id_fk": {
+          "name": "stock_niveaux_produit_id_produits_id_fk",
+          "tableFrom": "stock_niveaux",
+          "tableTo": "produits",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "stock_disponible_chk": {
+          "name": "stock_disponible_chk",
+          "value": "\"stock_niveaux\".\"disponible\" >= 0"
+        },
+        "stock_reserve_chk": {
+          "name": "stock_reserve_chk",
+          "value": "\"stock_niveaux\".\"reserve\" >= 0"
+        },
+        "stock_reserve_sous_disponible_chk": {
+          "name": "stock_reserve_sous_disponible_chk",
+          "value": "\"stock_niveaux\".\"reserve\" <= \"stock_niveaux\".\"disponible\""
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.tarifs_livraison": {
+      "name": "tarifs_livraison",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "fcfa_par_km": {
+          "name": "fcfa_par_km",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "minimum_fcfa": {
+          "name": "minimum_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "effet_debut": {
+          "name": "effet_debut",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "tarif_km_chk": {
+          "name": "tarif_km_chk",
+          "value": "\"tarifs_livraison\".\"fcfa_par_km\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.tentatives_connexion": {
+      "name": "tentatives_connexion",
+      "schema": "",
+      "columns": {
+        "telephone": {
+          "name": "telephone",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "echecs": {
+          "name": "echecs",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "verrouille_jusqua": {
+          "name": "verrouille_jusqua",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mis_a_jour_le": {
+          "name": "mis_a_jour_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.transactions": {
+      "name": "transactions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "commande_id": {
+          "name": "commande_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fournisseur": {
+          "name": "fournisseur",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'MYPVIT'"
+        },
+        "canal": {
+          "name": "canal",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "operateur": {
+          "name": "operateur",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reference_marchand": {
+          "name": "reference_marchand",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reference_fournisseur": {
+          "name": "reference_fournisseur",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "versement_id": {
+          "name": "versement_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "montant_fcfa": {
+          "name": "montant_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PENDING'"
+        },
+        "url_paiement": {
+          "name": "url_paiement",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dernier_controle": {
+          "name": "dernier_controle",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "transactions_commande_id_commandes_id_fk": {
+          "name": "transactions_commande_id_commandes_id_fk",
+          "tableFrom": "transactions",
+          "tableTo": "commandes",
+          "columnsFrom": [
+            "commande_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "transactions_versement_id_versements_echelonnes_id_fk": {
+          "name": "transactions_versement_id_versements_echelonnes_id_fk",
+          "tableFrom": "transactions",
+          "tableTo": "versements_echelonnes",
+          "columnsFrom": [
+            "versement_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "transactions_reference_marchand_unique": {
+          "name": "transactions_reference_marchand_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "reference_marchand"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "transaction_statut_chk": {
+          "name": "transaction_statut_chk",
+          "value": "\"transactions\".\"statut\" in ('PENDING','SUCCESS','FAILED','UNCERTAIN')"
+        },
+        "transaction_canal_chk": {
+          "name": "transaction_canal_chk",
+          "value": "\"transactions\".\"canal\" in ('MOBILE_MONEY','CARTE')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "conditions_version": {
+          "name": "conditions_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "conditions_acceptees_le": {
+          "name": "conditions_acceptees_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "telephone": {
+          "name": "telephone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mot_de_passe_hash": {
+          "name": "mot_de_passe_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'client'"
+        },
+        "entreprise_id": {
+          "name": "entreprise_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nom_affiche": {
+          "name": "nom_affiche",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nom": {
+          "name": "nom",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prenom": {
+          "name": "prenom",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_naissance": {
+          "name": "date_naissance",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "langue": {
+          "name": "langue",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'fr'"
+        },
+        "notif_messages_actives": {
+          "name": "notif_messages_actives",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "users_entreprise_id_entreprises_id_fk": {
+          "name": "users_entreprise_id_entreprises_id_fk",
+          "tableFrom": "users",
+          "tableTo": "entreprises",
+          "columnsFrom": [
+            "entreprise_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_telephone_unique": {
+          "name": "users_telephone_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "telephone"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "users_role_chk": {
+          "name": "users_role_chk",
+          "value": "\"users\".\"role\" in ('client','admin_principal','admin_secondaire','partenaire','livreur')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.versements_echelonnes": {
+      "name": "versements_echelonnes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "plan_id": {
+          "name": "plan_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "echeancier_id": {
+          "name": "echeancier_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "montant_fcfa": {
+          "name": "montant_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commercant_fcfa": {
+          "name": "commercant_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "commission_fcfa": {
+          "name": "commission_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "livraison_fcfa": {
+          "name": "livraison_fcfa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "encaisse_le": {
+          "name": "encaisse_le",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "versements_plan_idx": {
+          "name": "versements_plan_idx",
+          "columns": [
+            {
+              "expression": "plan_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "versements_echelonnes_plan_id_plans_echelonnes_id_fk": {
+          "name": "versements_echelonnes_plan_id_plans_echelonnes_id_fk",
+          "tableFrom": "versements_echelonnes",
+          "tableTo": "plans_echelonnes",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "versements_echelonnes_echeancier_id_echeanciers_articles_id_fk": {
+          "name": "versements_echelonnes_echeancier_id_echeanciers_articles_id_fk",
+          "tableFrom": "versements_echelonnes",
+          "tableTo": "echeanciers_articles",
+          "columnsFrom": [
+            "echeancier_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "versements_type_chk": {
+          "name": "versements_type_chk",
+          "value": "\"versements_echelonnes\".\"type\" in ('AVANCE','VERSEMENT')"
+        },
+        "versements_statut_chk": {
+          "name": "versements_statut_chk",
+          "value": "\"versements_echelonnes\".\"statut\" in ('EN_ATTENTE','ENCAISSE','ECHEC')"
+        },
+        "versements_montant_chk": {
+          "name": "versements_montant_chk",
+          "value": "\"versements_echelonnes\".\"montant_fcfa\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

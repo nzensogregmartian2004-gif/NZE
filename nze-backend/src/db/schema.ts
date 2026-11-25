@@ -1,6 +1,6 @@
 // Schéma PostgreSQL (Drizzle). Règles d'intégrité côté base : quantités et montants positifs.
 import { sql } from 'drizzle-orm';
-import { boolean, check, doublePrecision, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { boolean, check, date, doublePrecision, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
 const now = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
 
@@ -40,6 +40,9 @@ export const users = pgTable(
     role: text('role').notNull().default('client'),
     entrepriseId: uuid('entreprise_id').references(() => entreprises.id),
     nomAffiche: text('nom_affiche'),
+    nom: text('nom'),
+    prenom: text('prenom'),
+    dateNaissance: date('date_naissance', { mode: 'string' }),
     langue: text('langue').notNull().default('fr'),
     // Réglage de messagerie (cahier V3.0 §17.1) : alerte à chaque message reçu de NZE.
     notifMessagesActives: boolean('notif_messages_actives').notNull().default(true),
@@ -84,10 +87,14 @@ export const produits = pgTable(
   'produits',
   {
     id: uuid('id').primaryKey().defaultRandom(),
+    photoCle: text('photo_cle'),
+    empreinteImage: text('empreinte_image'),
     entrepriseId: uuid('entreprise_id').notNull().references(() => entreprises.id),
     etablissementId: uuid('etablissement_id').references(() => etablissements.id),
     categorieId: uuid('categorie_id').references(() => categories.id),
     nom: text('nom').notNull(),
+    marque: text('marque'),
+    modele: text('modele'),
     description: text('description'),
     prixFcfa: integer('prix_fcfa').notNull(),
     statut: text('statut').notNull().default('PUBLIE'),
@@ -636,6 +643,9 @@ export const adresses = pgTable(
     libelle: text('libelle').notNull(),
     quartier: text('quartier').notNull(),
     repere: text('repere'),
+    batiment: text('batiment'),
+    etage: text('etage'),
+    instructions: text('instructions'),
     latitude: doublePrecision('latitude').notNull(),
     longitude: doublePrecision('longitude').notNull(),
     photoCle: text('photo_cle'),
@@ -801,3 +811,23 @@ export const affectationsVersement = pgTable(
   },
   (t) => [check('affectation_cible_chk', sql`(${t.echeanceId} is null) <> (${t.penaliteId} is null)`)],
 );
+
+// Promotions : réduction sur un article, pendant une période. Gérées par l'administration (étape suivante).
+export const promotions = pgTable(
+  'promotions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    produitId: uuid('produit_id').notNull().references(() => produits.id),
+    titre: text('titre').notNull(),
+    pourcentage: integer('pourcentage').notNull(),
+    debut: timestamp('debut', { withTimezone: true }).notNull(),
+    fin: timestamp('fin', { withTimezone: true }).notNull(),
+    createdAt: now(),
+  },
+  (t) => [
+    check('promotions_pourcentage_chk', sql`${t.pourcentage} between 1 and 90`),
+    check('promotions_dates_chk', sql`${t.fin} > ${t.debut}`),
+    index('promotions_fin_idx').on(t.fin),
+  ],
+);
+

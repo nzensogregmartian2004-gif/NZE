@@ -32,7 +32,7 @@ export function verifierImage(contenu: Buffer, typeMime: string): void {
 }
 
 // Clé de stockage générée par le serveur, jamais par le client : dossier, identifiant et extension sont contrôlés.
-export function cleImage(dossier: 'fiches-prestataires', id: string, typeMime: string): string {
+export function cleImage(dossier: 'fiches-prestataires' | 'produits', id: string, typeMime: string): string {
   const ext = TYPES_IMAGE[typeMime];
   if (!ext) throw badRequest('Type d’image non accepté');
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) throw new Error('Identifiant de stockage invalide');

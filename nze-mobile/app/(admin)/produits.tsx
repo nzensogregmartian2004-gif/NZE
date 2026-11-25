@@ -33,6 +33,8 @@ export default function ProduitsAdmin() {
   const [description, setDescription] = useState('');
   const [caracteristiques, setCaracteristiques] = useState('');
   const [commentaires, setCommentaires] = useState('');
+  const [marque, setMarque] = useState('');
+  const [modele, setModele] = useState('');
   const [statut, setStatut] = useState<Statut>('PUBLIE');
   const [stock, setStock] = useState('');
   const [chargement, setChargement] = useState(false);
@@ -52,14 +54,14 @@ export default function ProduitsAdmin() {
       const p = await appeler<{ id: string }>('/admin/produits', {
         methode: 'POST',
         corps: {
-          entrepriseId, nom, prixFcfa: Number(prix), garantieJours: garantie ? Number(garantie) : undefined,
+          entrepriseId, nom, marque: marque || undefined, modele: modele || undefined, prixFcfa: Number(prix), garantieJours: garantie ? Number(garantie) : undefined,
           description: description || undefined, caracteristiques: lireCaracteristiques(caracteristiques),
           commentaires: commentaires || undefined, statut,
         },
       });
       const quantite = Number(stock);
       if (quantite > 0) await appeler(`/admin/produits/${p.id}/ajustements`, { methode: 'POST', corps: { delta: quantite, motif: t('produits.stockInitial') } });
-      setNom(''); setPrix(''); setGarantie(''); setDescription(''); setCaracteristiques(''); setCommentaires(''); setStock('');
+      setNom(''); setMarque(''); setModele(''); setPrix(''); setGarantie(''); setDescription(''); setCaracteristiques(''); setCommentaires(''); setStock('');
       setOuvert(false);
       setMessage({ texte: t('admin.produitCree'), type: 'succes' });
       charger();
@@ -97,6 +99,8 @@ export default function ProduitsAdmin() {
               ))}
             </View>
             <Champ label={t('admin.nomProduit')} valeur={nom} onChangeTexte={setNom} />
+      <Champ label={t('admin.marque')} valeur={marque} onChangeTexte={setMarque} />
+      <Champ label={t('admin.modele')} valeur={modele} onChangeTexte={setModele} />
             <Champ label={t('admin.prix')} valeur={prix} onChangeTexte={setPrix} clavier="number-pad" />
             <Champ label={t('admin.stockInitial')} valeur={stock} onChangeTexte={setStock} clavier="number-pad" />
             <Champ label={t('admin.garantie')} valeur={garantie} onChangeTexte={setGarantie} clavier="number-pad" />

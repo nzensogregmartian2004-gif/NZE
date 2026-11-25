@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { appeler, ApiError } from '../src/api/client';
 import { useI18n } from '../src/i18n';
 import { Bouton, Carte, Champ, Ecran, Message } from '../src/components/ui';
+import { CarteLivraison } from '../src/components/CarteLivraison';
 import { useFocusEffect } from 'expo-router';
 import { couleurs, espaces } from '../src/theme';
 
@@ -17,6 +18,9 @@ export default function Adresses() {
   const [libelle, setLibelle] = useState('');
   const [quartier, setQuartier] = useState('');
   const [repere, setRepere] = useState('');
+  const [batiment, setBatiment] = useState('');
+  const [etage, setEtage] = useState('');
+  const [instructions, setInstructions] = useState('');
   const [position, setPosition] = useState<{ latitude: number; longitude: number } | null>(null);
   const [message, setMessage] = useState<{ texte: string; type: 'erreur' | 'succes' } | null>(null);
 
@@ -38,9 +42,9 @@ export default function Adresses() {
     if (!position) return;
     setMessage(null);
     try {
-      await appeler('/adresses', { methode: 'POST', corps: { libelle, quartier, repere: repere || undefined, ...position } });
+      await appeler('/adresses', { methode: 'POST', corps: { libelle, quartier, repere: repere || undefined, batiment: batiment || undefined, etage: etage || undefined, instructions: instructions || undefined, ...position } });
       setAjout(false);
-      setLibelle(''); setQuartier(''); setRepere(''); setPosition(null);
+      setLibelle(''); setQuartier(''); setRepere(''); setBatiment(''); setEtage(''); setInstructions(''); setPosition(null);
       charger();
     } catch (e) {
       setMessage({ texte: e instanceof ApiError ? e.message : t('commun.erreur'), type: 'erreur' });
@@ -77,7 +81,21 @@ export default function Adresses() {
             <Champ label={t('adresses.libelle')} valeur={libelle} onChangeTexte={setLibelle} />
             <Champ label={t('adresses.quartier')} valeur={quartier} onChangeTexte={setQuartier} />
             <Champ label={t('adresses.repere')} valeur={repere} onChangeTexte={setRepere} />
-            <Bouton titre={t('adresses.position')} variante="secondaire" onPress={localiser} />
+            {!position ? (
+              <View style={styles.consentement}>
+                <Text style={styles.nom}>{t('adresses.consentementTitre')}</Text>
+                <Text style={styles.secondaire}>{t('adresses.consentement')}</Text>
+                <Bouton titre={t('adresses.autoriser')} variante="secondaire" onPress={localiser} />
+              </View>
+            ) : (
+              <View style={{ gap: espaces.xs }}>
+                <Text style={styles.nom}>{t('adresses.apercu')}</Text>
+                <CarteLivraison destination={position} livreur={null} />
+              </View>
+            )}
+            <Champ label={t('adresses.batiment')} valeur={batiment} onChangeTexte={setBatiment} />
+            <Champ label={t('adresses.etage')} valeur={etage} onChangeTexte={setEtage} />
+            <Champ label={t('adresses.instructions')} valeur={instructions} onChangeTexte={setInstructions} />
             <Bouton titre={t('adresses.enregistrer')} onPress={enregistrer} desactive={!position || !libelle || !quartier} />
           </Carte>
         )}
@@ -96,4 +114,5 @@ const styles = StyleSheet.create({
   secondaire: { color: couleurs.texteSecondaire },
   supprimer: { color: couleurs.danger, fontWeight: '600' },
   vide: { textAlign: 'center', color: couleurs.texteSecondaire },
+  consentement: { gap: espaces.s, padding: espaces.m, borderRadius: 12, borderWidth: 1, borderColor: couleurs.bordure },
 });

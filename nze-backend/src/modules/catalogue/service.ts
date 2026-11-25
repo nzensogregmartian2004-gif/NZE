@@ -1,9 +1,10 @@
 // Catalogue public et gestion administrative des produits.
 import { and, asc, desc, eq, gt, gte, ilike, lte, sql } from 'drizzle-orm';
 import type { Db } from '../../db/client.ts';
-import { categories, entreprises, etablissements, produits, stockNiveaux } from '../../db/schema.ts';
+import { categories, entreprises, etablissements, produits, promotions, stockNiveaux } from '../../db/schema.ts';
 import { assertFcfa } from '../../core/money.ts';
-import { notFound } from '../../core/errors.ts';
+import { AppError, notFound } from '../../core/errors.ts';
+import type { AuthUser } from '../../core/auth.ts';
 import { journaliser } from '../audit/service.ts';
 import { SEUIL_STOCK_FAIBLE } from '../stock/service.ts';
 export { SEUIL_STOCK_FAIBLE };
@@ -43,6 +44,7 @@ export async function listerProduits(
       nom: produits.nom,
       prixFcfa: produits.prixFcfa,
       garantieJours: produits.garantieJours,
+      aPhoto: sql<boolean>`${produits.photoCle} is not null`,
       disponible: stockNiveaux.disponible,
       reserve: stockNiveaux.reserve,
       etat: stockNiveaux.etat,
@@ -109,7 +111,7 @@ export async function creerCategorie(db: Db, nom: string, slug: string) {
 
 export async function creerProduit(
   db: Db,
-  data: { entrepriseId: string; etablissementId?: string; categorieId?: string; nom: string; description?: string; prixFcfa: number; garantieJours?: number; statut?: 'BROUILLON' | 'PUBLIE' | 'SUSPENDU'; caracteristiques?: { nom: string; valeur: string }[]; photos?: string[]; commentaires?: string },
+  data: { entrepriseId: string; etablissementId?: string; categorieId?: string; nom: string; marque?: string; modele?: string; description?: string; prixFcfa: number; garantieJours?: number; statut?: 'BROUILLON' | 'PUBLIE' | 'SUSPENDU'; caracteristiques?: { nom: string; valeur: string }[]; photos?: string[]; commentaires?: string },
 ) {
   const prix = assertFcfa(data.prixFcfa, 'Prix');
   return db.transaction(async (tx) => {
@@ -119,11 +121,13 @@ export async function creerProduit(
   });
 }
 
-export async function modifierProduit(db: Db, id: string, changements: { nom?: string; description?: string; garantieJours?: number; prixFcfa?: number; statut?: 'BROUILLON' | 'PUBLIE' | 'SUSPENDU'; caracteristiques?: { nom: string; valeur: string }[]; photos?: string[]; commentaires?: string }) {
+export async function modifierProduit(db: Db, id: string, changements: { nom?: string; marque?: string; modele?: string; description?: string; garantieJours?: number; prixFcfa?: number; statut?: 'BROUILLON' | 'PUBLIE' | 'SUSPENDU'; caracteristiques?: { nom: string; valeur: string }[]; photos?: string[]; commentaires?: string }) {
   const set: Record<string, unknown> = {};
   if (changements.prixFcfa !== undefined) set.prixFcfa = assertFcfa(changements.prixFcfa, 'Prix');
   if (changements.statut !== undefined) set.statut = changements.statut;
   if (changements.nom !== undefined) set.nom = changements.nom;
+  if (changements.marque !== undefined) set.marque = changements.marque;
+  if (changements.modele !== undefined) set.modele = changements.modele;
   if (changements.description !== undefined) set.description = changements.description;
   if (changements.garantieJours !== undefined) set.garantieJours = changements.garantieJours;
   if (changements.caracteristiques !== undefined) set.caracteristiques = changements.caracteristiques;
@@ -148,3 +152,100 @@ export async function modifierEntreprise(
     return e;
   });
 }
+
+// Promotions en cours : celles dont la période contient le moment demandé. Prix après réduction en FCFA entiers.
+export async function promotionsEnCours(db: Db, maintenant: Date = new Date()) {
+  const lignes = await db
+    .select({
+      id: promotions.id,
+      titre: promotions.titre,
+      pourcentage: promotions.pourcentage,
+      fin: promotions.fin,
+      produitId: produits.id,
+      produitNom: produits.nom,
+      prixFcfa: produits.prixFcfa,
+    })
+    .from(promotions)
+    .innerJoin(produits, eq(produits.id, promotions.produitId))
+    .where(and(lte(promotions.debut, maintenant), gt(promotions.fin, maintenant)))
+    .orderBy(asc(promotions.fin));
+  return lignes.map(({ prixFcfa, ...l }) => ({
+    ...l,
+    prixAvantFcfa: prixFcfa,
+    prixApresFcfa: Math.round((prixFcfa * (100 - l.pourcentage)) / 100),
+  }));
+}
+
+// Dates saisies au format AAAA-MM-JJ, à l'heure de Libreville (UTC+1) : début à minuit, fin à 23 h 59.
+export function debutDeJournee(texte: string): Date {
+  return new Date(`${texte}T00:00:00+01:00`);
+}
+export function finDeJournee(texte: string): Date {
+  return new Date(`${texte}T23:59:59+01:00`);
+}
+
+export async function listerPromotions(db: Db) {
+  return db
+    .select({
+      id: promotions.id,
+      titre: promotions.titre,
+      pourcentage: promotions.pourcentage,
+      debut: promotions.debut,
+      fin: promotions.fin,
+      produitId: produits.id,
+      produitNom: produits.nom,
+      prixFcfa: produits.prixFcfa,
+    })
+    .from(promotions)
+    .innerJoin(produits, eq(produits.id, promotions.produitId))
+    .orderBy(desc(promotions.debut));
+}
+
+export interface SaisiePromotion {
+  produitId: string;
+  titre: string;
+  pourcentage: number;
+  debut: string;
+  fin: string;
+}
+
+export async function creerPromotion(db: Db, acteur: AuthUser, b: SaisiePromotion) {
+  const [produit] = await db.select({ id: produits.id }).from(produits).where(eq(produits.id, b.produitId)).limit(1);
+  if (!produit) throw notFound('Article introuvable');
+  const debut = debutDeJournee(b.debut);
+  const fin = finDeJournee(b.fin);
+  if (fin.getTime() <= debut.getTime()) {
+    throw new AppError(400, 'PERIODE_INVALIDE', 'La date de fin doit être après la date de début.');
+  }
+  const [row] = await db
+    .insert(promotions)
+    .values({ produitId: b.produitId, titre: b.titre, pourcentage: b.pourcentage, debut, fin })
+    .returning();
+  await journaliser(db, { acteurId: acteur.id, action: 'PROMOTION_CREEE', cibleType: 'promotion', cibleId: row.id, details: { produitId: b.produitId, pourcentage: b.pourcentage } });
+  return row;
+}
+
+export async function modifierPromotion(db: Db, acteur: AuthUser, id: string, b: { titre?: string; pourcentage?: number; fin?: string; arreter?: boolean }) {
+  const [actuelle] = await db.select().from(promotions).where(eq(promotions.id, id)).limit(1);
+  if (!actuelle) throw notFound('Promotion introuvable');
+  const valeurs: { titre?: string; pourcentage?: number; fin?: Date } = {};
+  if (b.titre !== undefined) valeurs.titre = b.titre;
+  if (b.pourcentage !== undefined) valeurs.pourcentage = b.pourcentage;
+  if (b.arreter) valeurs.fin = new Date();
+  else if (b.fin !== undefined) valeurs.fin = finDeJournee(b.fin);
+  if (Object.keys(valeurs).length === 0) throw new AppError(400, 'RIEN_A_MODIFIER', 'Aucune modification demandée.');
+  if (valeurs.fin && valeurs.fin.getTime() <= actuelle.debut.getTime()) {
+    throw new AppError(400, 'PERIODE_INVALIDE', 'La promotion se terminerait avant de commencer.');
+  }
+  const [row] = await db.update(promotions).set(valeurs).where(eq(promotions.id, id)).returning();
+  await journaliser(db, { acteurId: acteur.id, action: 'PROMOTION_MODIFIEE', cibleType: 'promotion', cibleId: id, details: { ...b } });
+  return row;
+}
+
+export async function supprimerPromotion(db: Db, acteur: AuthUser, id: string) {
+  const [row] = await db.delete(promotions).where(eq(promotions.id, id)).returning({ id: promotions.id });
+  if (!row) throw notFound('Promotion introuvable');
+  await journaliser(db, { acteurId: acteur.id, action: 'PROMOTION_SUPPRIMEE', cibleType: 'promotion', cibleId: id, details: {} });
+  return { id };
+}
+

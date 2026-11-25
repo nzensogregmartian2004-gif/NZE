@@ -1,9 +1,11 @@
+import { useSession } from '../../src/auth/session';
+import { useI18n } from '../../src/i18n';
+import { ConnexionRequise } from '../../src/components/ConnexionRequise';
 import { useCallback, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { appeler } from '../../src/api/client';
 import { enregistrerLignes, lirePanier, type Livraison, type Panier } from '../../src/api/panier';
-import { useI18n } from '../../src/i18n';
 import { Bouton, Carte, Ecran, Message } from '../../src/components/ui';
 import { formatFcfa } from '../../src/lib/format';
 import { couleurs, espaces, rayons } from '../../src/theme';
@@ -12,7 +14,7 @@ interface LigneAffichee { produitId: string; quantite: number; montant: number; 
 interface Adresse { id: string; libelle: string; quartier: string; latitude: number; longitude: number }
 type Reception = 'RETRAIT' | 'LIVRAISON';
 
-export default function PanierEcran() {
+function PanierEcran() {
   const { t, langue } = useI18n();
   const [panier, setPanier] = useState<Panier | null>(null);
   const [noms, setNoms] = useState<Record<string, string>>({});
@@ -180,3 +182,10 @@ const styles = StyleSheet.create({
   totalMontant: { fontSize: 18, fontWeight: '700', color: couleurs.texte },
   vide: { textAlign: 'center', color: couleurs.texteSecondaire, marginTop: espaces.xl },
 });
+
+export default function PanierEcranAccueil() {
+  const { statut } = useSession();
+  const { t } = useI18n();
+  if (statut === 'deconnecte') return <ConnexionRequise titre={t('auth.requise.panier')} />;
+  return <PanierEcran />;
+}

@@ -27,8 +27,16 @@ export function authRouter(deps: AuthDeps & { db: Db }) {
       motDePasse,
       nomAffiche: z.string().min(2).max(80).optional(),
       langue: z.enum(['fr', 'en', 'ar', 'zh-Hans']).optional(),
+      nom: z.string().max(60).optional(),
+      prenom: z.string().max(60).optional(),
+      dateNaissance: z.string().max(10).optional(),
+      accepteConditions: z.boolean().optional(),
     }), req.body);
-    res.status(201).json(await inscrire(deps, b.telephone, b.motDePasse, b.nomAffiche, b.langue));
+    const profilDemande = b.nom !== undefined || b.prenom !== undefined || b.dateNaissance !== undefined || b.accepteConditions !== undefined;
+    const profil = profilDemande
+      ? { nom: b.nom ?? '', prenom: b.prenom ?? '', dateNaissance: b.dateNaissance ?? '', accepteConditions: b.accepteConditions === true }
+      : undefined;
+    res.status(201).json(await inscrire(deps, b.telephone, b.motDePasse, b.nomAffiche, b.langue, profil));
   });
 
   r.post('/auth/connexion', limiteConnexion, async (req, res) => {

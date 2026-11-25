@@ -6,7 +6,7 @@ import { ADMIN_ROLES, getUser, requireAuth, requireRole } from '../../core/auth.
 import { parse } from '../../core/http.ts';
 import { journaliser } from '../audit/service.ts';
 import { changerStatutEntreprise } from '../entreprises/cycle.ts';
-import { PAGE_MAX, creerCategorie, creerEntreprise, creerEtablissement, creerProduit, detaillerProduit, listerProduits, modifierProduit, listerEntreprises, modifierEntreprise } from './service.ts';
+import { creerPromotion, listerPromotions, modifierPromotion, promotionsEnCours, supprimerPromotion, PAGE_MAX, creerCategorie, creerEntreprise, creerEtablissement, creerProduit, detaillerProduit, listerProduits, modifierProduit, listerEntreprises, modifierEntreprise } from './service.ts';
 
 const uuid = z.string().uuid();
 
@@ -74,6 +74,8 @@ export function catalogueRouter(db: Db, sessionSecret: string) {
         etablissementId: uuid.optional(),
         categorieId: uuid.optional(),
         nom: z.string().min(2).max(160),
+        marque: z.string().trim().min(1).max(60).optional(),
+        modele: z.string().trim().min(1).max(80).optional(),
         description: z.string().max(4000).optional(),
         prixFcfa: z.number().int().positive(),
         garantieJours: z.number().int().min(0).max(3650).optional(),
@@ -94,6 +96,8 @@ export function catalogueRouter(db: Db, sessionSecret: string) {
     const b = parse(
       z.object({
         nom: z.string().min(2).max(160).optional(),
+        marque: z.string().trim().min(1).max(60).optional(),
+        modele: z.string().trim().min(1).max(80).optional(),
         description: z.string().max(4000).optional(),
         garantieJours: z.number().int().min(0).max(3650).optional(),
         prixFcfa: z.number().int().positive().optional(),
@@ -110,6 +114,47 @@ export function catalogueRouter(db: Db, sessionSecret: string) {
     if (b.statut !== undefined) details.statut = b.statut;
     await journaliser(db, { acteurId: getUser(res).id, action: 'PRODUIT_MODIFIE', cibleType: 'produit', cibleId: id, details });
     res.json(produit);
+  });
+
+  // Gestion des promotions par l'administration. Dates au format AAAA-MM-JJ (heure de Libreville).
+  const dateSaisie = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date attendue au format AAAA-MM-JJ');
+  r.get('/admin/promotions', ...admin, async (_req, res) => {
+    res.json(await listerPromotions(db));
+  });
+  r.post('/admin/promotions', ...admin, async (req, res) => {
+    const b = parse(
+      z.object({
+        produitId: uuid,
+        titre: z.string().min(2).max(80),
+        pourcentage: z.number().int().min(1).max(90),
+        debut: dateSaisie,
+        fin: dateSaisie,
+      }),
+      req.body,
+    );
+    res.status(201).json(await creerPromotion(db, getUser(res), b));
+  });
+  r.patch('/admin/promotions/:id', ...admin, async (req, res) => {
+    const id = parse(uuid, req.params.id);
+    const b = parse(
+      z.object({
+        titre: z.string().min(2).max(80).optional(),
+        pourcentage: z.number().int().min(1).max(90).optional(),
+        fin: dateSaisie.optional(),
+        arreter: z.literal(true).optional(),
+      }),
+      req.body,
+    );
+    res.json(await modifierPromotion(db, getUser(res), id, b));
+  });
+  r.delete('/admin/promotions/:id', ...admin, async (req, res) => {
+    const id = parse(uuid, req.params.id);
+    res.json(await supprimerPromotion(db, getUser(res), id));
+  });
+
+  // Promotions en cours, visibles de tous : elles alimentent le bandeau de l'accueil.
+  r.get('/promotions', async (_req, res) => {
+    res.json(await promotionsEnCours(db));
   });
 
   return r;

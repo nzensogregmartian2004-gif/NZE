@@ -18,7 +18,8 @@ export function CarteLivraison({ destination, livreur }: { destination: Coordonn
   const dernierDepart = useRef<Coordonnees | null>(null);
 
   useEffect(() => {
-    if (!JETON) return;
+    // Pas d'itinéraire tant que la position du livreur est inconnue : on évite un appel payant inutile.
+    if (!JETON || !livreur) return;
     const depart = { latitude: departLat, longitude: departLon };
     if (!doitRecalculerTrace(dernierDepart.current, depart)) return;
     dernierDepart.current = depart;

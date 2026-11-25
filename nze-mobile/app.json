@@ -37,6 +37,25 @@
         {
           "locationWhenInUsePermission": "NZE utilise votre position pour afficher la carte et transmettre votre position pendant la livraison."
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "buildArchs": [
+              "arm64-v8a"
+            ],
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "NZE utilise l’appareil photo pour rechercher un article à partir d’une photo.",
+          "photosPermission": "NZE accède à vos photos pour rechercher un article, ou pour ajouter les photos des articles."
+        }
       ]
     ],
     "experiments": {

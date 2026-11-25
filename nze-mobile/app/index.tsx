@@ -14,6 +14,7 @@ export function cheminPourRole(role: string): string {
 export default function Entree() {
   const { statut, utilisateur } = useSession();
   if (statut === 'chargement') return <Chargement />;
-  if (statut === 'deconnecte' || !utilisateur) return <Redirect href="/(auth)/connexion" />;
+  // Sans compte, l'accueil est le catalogue : la connexion n'est demandée qu'au moment d'acheter.
+  if (statut === 'deconnecte' || !utilisateur) return <Redirect href="/(tabs)" />;
   return <Redirect href={cheminPourRole(utilisateur.role)} />;
 }

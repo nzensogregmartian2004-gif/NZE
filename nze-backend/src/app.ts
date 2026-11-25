@@ -9,6 +9,7 @@ import type { OtpSender } from './modules/auth/otp-sender.ts';
 import { errorHandler } from './core/http.ts';
 import { authRouter } from './modules/auth/routes.ts';
 import { catalogueRouter } from './modules/catalogue/routes.ts';
+import { photosRouter } from './modules/catalogue/photos-routes.ts';
 import { stockRouter } from './modules/stock/routes.ts';
 import { adminRouter } from './modules/admin/routes.ts';
 import { commandesRouter } from './modules/commandes/routes.ts';
@@ -60,6 +61,7 @@ export function createApp(deps: AppDeps) {
   });
   // Photos de fiches : une limite plus grande, pour cette seule route (le reste de l'API reste à 256 ko).
   app.use(/^\/admin\/prestataires\/[^/]+\/photo$/, express.json({ limit: '4500kb' }));
+  app.use(/^\/(admin\/produits\/[^/]+\/photo|recherche\/photo)$/, express.json({ limit: '4500kb' }));
   app.use(express.json({ limit: '256kb' }));
 
   app.get('/sante', (_req, res) => {
@@ -76,6 +78,7 @@ export function createApp(deps: AppDeps) {
   const paiement = { db: deps.db, mypvit: deps.mypvit, redirections: deps.redirections, cartographie: deps.cartographie };
   app.use(authRouter({ db: deps.db, sessionSecret: secret, sender: deps.sender, recuperationAssistee: deps.config.recuperationAssistee ?? false }));
   app.use(catalogueRouter(deps.db, secret));
+  app.use(photosRouter(deps.db, secret, deps.stockage ?? null));
   app.use(publiciteRouter(deps.db, secret, deps.stockage ?? null));
   app.use(realtimeRouter(deps.db, secret, deps.realtime ?? null));
   app.use(stockRouter(deps.db, secret));

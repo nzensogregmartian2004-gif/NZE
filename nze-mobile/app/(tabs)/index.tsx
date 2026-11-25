@@ -1,16 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View, ScrollView } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Pressable, StyleSheet, Text, TextInput, View, ScrollView } from 'react-native';
 import { appeler } from '../../src/api/client';
+import { API_URL } from '../../src/config';
 import { useI18n } from '../../src/i18n';
+import { urlPhotoProduit } from '../../src/lib/photos';
 import { Carte, Ecran } from '../../src/components/ui';
 import { formatFcfa } from '../../src/lib/format';
 import { TAILLE_PAGE, TAILLE_RANGEE, fusionnerPages, uneSuiteExiste } from '../../src/lib/pagination';
+import { promotionParProduit, type Promotion } from '../../src/lib/promotions';
 import { tailles, couleurs, espaces, rayons } from '../../src/theme';
 
-interface ProduitListe { id: string; nom: string; prixFcfa: number; enStock: boolean }
+interface ProduitListe { id: string; nom: string; prixFcfa: number; enStock: boolean; aPhoto?: boolean }
 interface Categorie { id: string; nom: string; slug: string }
 type Tri = 'nom' | 'prix-croissant' | 'prix-decroissant';
+
+const LARGEUR_OFFRE = 300;
+const ESPACE_OFFRE = espaces.m;
+const DELAI_DEFILEMENT_MS = 4000;
 
 export default function Accueil() {
   const { t, langue } = useI18n();
@@ -24,12 +31,33 @@ export default function Accueil() {
   const [rangees, setRangees] = useState<Record<string, ProduitListe[]>>({});
   const [enStock, setEnStock] = useState(false);
   const [tri, setTri] = useState<Tri>('nom');
+  const [offres, setOffres] = useState<Promotion[]>([]);
   const requete = useRef(0);   // numéro de la dernière requête : une réponse plus ancienne est ignorée
   const recus = useRef(0);     // nombre d'articles reçus de l'API pour la liste courante (sert de décalage)
+  const bandeau = useRef<FlatList<Promotion>>(null);
+  const indexBandeau = useRef(0);
+
+  const offreDuProduit = useMemo(() => promotionParProduit(offres), [offres]);
 
   useEffect(() => {
     appeler<Categorie[]>('/categories', { sansJeton: true }).then(setCategories).catch(() => setCategories([]));
+    appeler<Promotion[]>('/promotions', { sansJeton: true }).then(setOffres).catch(() => setOffres([]));
   }, []);
+
+  // Le bandeau d'offres défile tout seul, puis revient au début.
+  useEffect(() => {
+    if (offres.length < 2) return;
+    const minuteur = setInterval(() => {
+      const suivant = (indexBandeau.current + 1) % offres.length;
+      indexBandeau.current = suivant;
+      try {
+        bandeau.current?.scrollToIndex({ index: suivant, animated: true });
+      } catch {
+        // Bandeau pas encore mesuré : le prochain défilement corrigera.
+      }
+    }, DELAI_DEFILEMENT_MS);
+    return () => clearInterval(minuteur);
+  }, [offres.length]);
 
   useEffect(() => {
     setCategorie(categorieInitiale);
@@ -97,25 +125,72 @@ export default function Accueil() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categories, recherche, categorie, enStock, tri]);
 
-  const carte = (item: ProduitListe) => (
-    <Pressable onPress={() => router.push(`/produit/${item.id}`)} style={styles.cellule}>
-      <Carte style={styles.carte}>
-        <View style={styles.photo}><Text style={styles.photoTexte}>{t('commun.photo')}</Text></View>
-        <Text style={styles.nom} numberOfLines={2}>{item.nom}</Text>
-        <Text style={styles.prix}>{formatFcfa(item.prixFcfa, langue)}</Text>
-        <Text style={{ color: item.enStock ? couleurs.succes : couleurs.danger, fontSize: 12 }}>
-          {item.enStock ? t('accueil.enStock') : t('accueil.rupture')}
-        </Text>
-      </Carte>
-    </Pressable>
-  );
+  // Article : prix barré et libellé de l'offre quand il est en promotion.
+  const carte = (item: ProduitListe) => {
+    const offre = offreDuProduit.get(item.id);
+    return (
+      <Pressable onPress={() => router.push(`/produit/${item.id}`)} style={styles.cellule}>
+        <Carte style={styles.carte}>
+          <View style={styles.photo}>
+            {item.aPhoto ? (
+              <Image source={{ uri: urlPhotoProduit(API_URL, item.id) }} style={styles.photoImage} resizeMode="cover" />
+            ) : (
+              <Text style={styles.photoTexte}>{t('commun.photo')}</Text>
+            )}
+            {offre ? <Text style={[styles.badge, styles.badgeEnHaut]}>{t('accueil.topOffre')}</Text> : null}
+          </View>
+          <Text style={styles.nom} numberOfLines={2}>{item.nom}</Text>
+          {offre ? (
+            <View style={styles.ligneprix}>
+              <Text style={styles.prixBarre}>{formatFcfa(offre.prixAvantFcfa, langue)}</Text>
+              <Text style={styles.prix}>{formatFcfa(offre.prixApresFcfa, langue)}</Text>
+            </View>
+          ) : (
+            <Text style={styles.prix}>{formatFcfa(item.prixFcfa, langue)}</Text>
+          )}
+          <Text style={{ color: item.enStock ? couleurs.succes : couleurs.danger, fontSize: 12 }}>
+            {item.enStock ? t('accueil.enStock') : t('accueil.rupture')}
+          </Text>
+        </Carte>
+      </Pressable>
+    );
+  };
 
-  // Vue d'accueil sans recherche ni catégorie : rangées par catégorie, puis tous les articles
+  // Vue d'accueil sans recherche ni catégorie : bandeau d'offres, rangées par catégorie, puis tous les articles
   // (y compris ceux sans catégorie, qui n'apparaissent dans aucune rangée).
   const vueParDefaut = !recherche && !categorie;
 
   const entete = vueParDefaut ? (
     <View style={styles.rangees}>
+      {offres.length > 0 ? (
+        <View style={styles.rangee}>
+          <Text style={styles.rangeeTitre}>{t('accueil.offres')}</Text>
+          <FlatList
+            ref={bandeau}
+            horizontal
+            data={offres}
+            keyExtractor={(o) => o.id}
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={LARGEUR_OFFRE + ESPACE_OFFRE}
+            decelerationRate="fast"
+            contentContainerStyle={styles.rangeeListe}
+            getItemLayout={(_, i) => ({ length: LARGEUR_OFFRE + ESPACE_OFFRE, offset: (LARGEUR_OFFRE + ESPACE_OFFRE) * i, index: i })}
+            renderItem={({ item: o }) => (
+              <Pressable onPress={() => router.push(`/produit/${o.produitId}`)} style={styles.offre}>
+                <View style={styles.offreTete}>
+                  <Text style={styles.badge}>{t('accueil.topOffre')} · {o.titre}</Text>
+                  <Text style={styles.reduction}>{t('accueil.reduction', { p: o.pourcentage })}</Text>
+                </View>
+                <Text style={styles.nom} numberOfLines={2}>{o.produitNom}</Text>
+                <View style={styles.ligneprix}>
+                  <Text style={styles.prixBarre}>{formatFcfa(o.prixAvantFcfa, langue)}</Text>
+                  <Text style={styles.prixOffre}>{formatFcfa(o.prixApresFcfa, langue)}</Text>
+                </View>
+              </Pressable>
+            )}
+          />
+        </View>
+      ) : null}
       {categories.map((c) => (rangees[c.slug]?.length ? (
         <View key={c.id} style={styles.rangee}>
           <View style={styles.rangeeEntete}>
@@ -141,14 +216,22 @@ export default function Accueil() {
   return (
     <Ecran>
       <View style={styles.entete}>
-        <TextInput
-          value={recherche}
-          onChangeText={setRecherche}
-          placeholder={t('accueil.recherche')}
-          placeholderTextColor={couleurs.texteSecondaire}
-          style={styles.recherche}
-          autoCapitalize="none"
-        />
+        <View style={styles.ligneRecherche}>
+          <TextInput
+            value={recherche}
+            onChangeText={setRecherche}
+            placeholder={t('accueil.recherche')}
+            placeholderTextColor={couleurs.texteSecondaire}
+            style={styles.recherche}
+            autoCapitalize="none"
+          />
+          <Pressable onPress={() => router.push('/adresses')} accessibilityRole="button" accessibilityLabel={t('accueil.localisation')} style={styles.localisation}>
+            <Text style={styles.localisationIcone}>📍</Text>
+          </Pressable>
+          <Pressable onPress={() => router.push('/recherche-photo')} accessibilityRole="button" accessibilityLabel={t('recherche.photo.titre')} style={styles.localisation}>
+            <Text style={styles.localisationIcone}>📷</Text>
+          </Pressable>
+        </View>
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
         <Pressable onPress={() => setCategorie(undefined)} style={[styles.chip, !categorie && styles.chipActif]}>
@@ -191,7 +274,10 @@ export default function Accueil() {
 
 const styles = StyleSheet.create({
   entete: { padding: espaces.l, paddingBottom: espaces.s },
-  recherche: { height: tailles.champHauteur, borderRadius: rayons.pilule, borderWidth: 1, borderColor: couleurs.bordure, paddingHorizontal: espaces.l, fontSize: 16, color: couleurs.texte },
+  ligneRecherche: { flexDirection: 'row', alignItems: 'center', gap: espaces.s },
+  recherche: { flex: 1, height: tailles.champHauteur, borderRadius: rayons.pilule, borderWidth: 1, borderColor: couleurs.bordure, paddingHorizontal: espaces.l, fontSize: 16, color: couleurs.texte },
+  localisation: { width: tailles.champHauteur, height: tailles.champHauteur, borderRadius: rayons.pilule, borderWidth: 1, borderColor: couleurs.bordure, alignItems: 'center', justifyContent: 'center' },
+  localisationIcone: { fontSize: 18 },
   chips: { paddingHorizontal: espaces.l, gap: espaces.s, paddingBottom: espaces.m },
   chip: { paddingHorizontal: espaces.m, height: 36, borderRadius: rayons.pilule, borderWidth: 1, borderColor: couleurs.bordure, justifyContent: 'center' },
   chipActif: { backgroundColor: couleurs.violet, borderColor: couleurs.violet },
@@ -201,18 +287,27 @@ const styles = StyleSheet.create({
   ligne: { gap: espaces.m },
   cellule: { flex: 1 },
   carte: { flex: 1, gap: espaces.s },
-  photo: { height: 110, borderRadius: rayons.s, backgroundColor: couleurs.fond, alignItems: 'center', justifyContent: 'center' },
+  photo: { height: 110, borderRadius: rayons.s, backgroundColor: couleurs.fond, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  photoImage: { width: '100%', height: '100%' },
+  badgeEnHaut: { position: 'absolute', top: 6, left: 6 },
   photoTexte: { color: couleurs.texteSecondaire, fontSize: 12 },
+  badge: { alignSelf: 'flex-start', backgroundColor: couleurs.danger, color: couleurs.blanc, fontSize: 11, fontWeight: '700', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, overflow: 'hidden' },
   nom: { color: couleurs.texte, fontWeight: '500' },
+  ligneprix: { flexDirection: 'row', alignItems: 'baseline', gap: espaces.s, flexWrap: 'wrap' },
   prix: { color: couleurs.violet, fontWeight: '700' },
+  prixBarre: { color: couleurs.texteSecondaire, textDecorationLine: 'line-through', fontSize: 13 },
+  prixOffre: { color: couleurs.danger, fontWeight: '800', fontSize: 16 },
+  reduction: { color: couleurs.danger, fontWeight: '800' },
   vide: { textAlign: 'center', color: couleurs.texteSecondaire, marginTop: espaces.xl },
   attente: { paddingVertical: espaces.l },
   rangees: { paddingBottom: espaces.m, gap: espaces.l },
   rangee: { gap: espaces.s },
   rangeeEntete: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: espaces.l },
-  rangeeTitre: { fontSize: 16, fontWeight: '700', color: couleurs.texte },
+  rangeeTitre: { fontSize: 16, fontWeight: '700', color: couleurs.texte, paddingHorizontal: espaces.l },
   voirTout: { color: couleurs.violet, fontWeight: '600' },
-  rangeeListe: { paddingHorizontal: espaces.l, gap: espaces.m },
+  rangeeListe: { paddingHorizontal: espaces.l, gap: ESPACE_OFFRE },
   rangeeCellule: { width: 160 },
+  offre: { width: LARGEUR_OFFRE, padding: espaces.m, gap: espaces.s, borderRadius: rayons.m, borderWidth: 1, borderColor: couleurs.bordure, backgroundColor: couleurs.blanc },
+  offreTete: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: espaces.s },
   titreSection: { fontSize: 16, fontWeight: '700', color: couleurs.texte, paddingHorizontal: espaces.l },
 });

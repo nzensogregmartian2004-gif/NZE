@@ -28,7 +28,12 @@ export function parcoursRouter(db: Db, sessionSecret: string, cartographie: Cart
   });
 
   r.patch('/profil', connecte, async (req, res) => {
-    const b = parse(z.object({ nomAffiche: z.string().min(2).max(80).optional(), langue: z.enum(LANGUES).optional() }), req.body);
+    const b = parse(z.object({
+      nomAffiche: z.string().min(2).max(80).optional(),
+      langue: z.enum(LANGUES).optional(),
+      nom: z.string().trim().min(1).max(60).optional(),
+      prenom: z.string().trim().min(1).max(60).optional(),
+    }), req.body);
     res.json(await modifierProfil(db, getUser(res), b));
   });
 
@@ -42,6 +47,9 @@ export function parcoursRouter(db: Db, sessionSecret: string, cartographie: Cart
         libelle: z.string().min(1).max(60),
         quartier: z.string().min(2).max(120),
         repere: z.string().max(200).optional(),
+        batiment: z.string().max(80).optional(),
+        etage: z.string().max(20).optional(),
+        instructions: z.string().max(300).optional(),
         latitude: z.number().min(-90).max(90),
         longitude: z.number().min(-180).max(180),
         photoCle: z.string().min(1).max(300).optional(),

@@ -10,6 +10,8 @@ export default function Layout() {
       <Tabs.Screen name="index" options={{ title: t('onglets.tableau'), tabBarIcon: ({ color, size }) => <Ionicons name="speedometer-outline" color={color as string} size={size} /> }} />
       <Tabs.Screen name="collectes" options={{ title: t('onglets.collectes'), tabBarIcon: ({ color, size }) => <Ionicons name="cube-outline" color={color as string} size={size} /> }} />
       <Tabs.Screen name="produits" options={{ title: t('onglets.produits'), tabBarIcon: ({ color, size }) => <Ionicons name="pricetags-outline" color={color as string} size={size} /> }} />
+      <Tabs.Screen name="promotions" options={{ title: t('onglets.promotions'), tabBarIcon: ({ color, size }) => <Ionicons name="pricetag-outline" color={color as string} size={size} /> }} />
+      <Tabs.Screen name="photos" options={{ title: t('onglets.photos'), tabBarIcon: ({ color, size }) => <Ionicons name="images-outline" color={color as string} size={size} /> }} />
       <Tabs.Screen name="retraits" options={{ title: t('onglets.retraits'), tabBarIcon: ({ color, size }) => <Ionicons name="wallet-outline" color={color as string} size={size} /> }} />
       <Tabs.Screen name="commandes" options={{ title: t('onglets.commandes'), tabBarIcon: ({ color, size }) => <Ionicons name="receipt-outline" color={color as string} size={size} /> }} />
       <Tabs.Screen name="reclamations" options={{ title: t('onglets.reclamations'), tabBarIcon: ({ color, size }) => <Ionicons name="alert-circle-outline" color={color as string} size={size} /> }} />

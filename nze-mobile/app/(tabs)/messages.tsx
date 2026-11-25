@@ -1,14 +1,16 @@
+import { useSession } from '../../src/auth/session';
+import { useI18n } from '../../src/i18n';
+import { ConnexionRequise } from '../../src/components/ConnexionRequise';
 import { useCallback, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { appeler } from '../../src/api/client';
-import { useI18n } from '../../src/i18n';
 import { Bouton, Carte, Ecran } from '../../src/components/ui';
 import { couleurs, espaces } from '../../src/theme';
 
 interface Conversation { id: string; produitId: string | null; createdAt: string }
 
-export default function Messages() {
+function Messages() {
   const { t } = useI18n();
   const [conversations, setConversations] = useState<Conversation[]>([]);
 
@@ -55,3 +57,10 @@ const styles = StyleSheet.create({
   vide: { textAlign: 'center', color: couleurs.texteSecondaire, marginTop: espaces.xl },
   pied: { padding: espaces.l, borderTopWidth: 1, borderTopColor: couleurs.bordure },
 });
+
+export default function MessagesAccueil() {
+  const { statut } = useSession();
+  const { t } = useI18n();
+  if (statut === 'deconnecte') return <ConnexionRequise titre={t('auth.requise.messages')} />;
+  return <Messages />;
+}

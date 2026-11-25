@@ -17,13 +17,22 @@ export async function listerCategories(db: Db) {
 export async function lireProfil(db: Db, user: AuthUser) {
   const [u] = await db.select().from(users).where(eq(users.id, user.id)).limit(1);
   if (!u) throw notFound('Compte introuvable');
-  return { id: u.id, telephone: u.telephone, role: u.role, nomAffiche: u.nomAffiche, langue: u.langue };
+  return { id: u.id, telephone: u.telephone, role: u.role, nomAffiche: u.nomAffiche, langue: u.langue, nom: u.nom, prenom: u.prenom, dateNaissance: u.dateNaissance };
 }
 
-export async function modifierProfil(db: Db, user: AuthUser, changements: { nomAffiche?: string; langue?: (typeof LANGUES)[number] }) {
-  const set: Partial<{ nomAffiche: string; langue: string }> = {};
+export async function modifierProfil(db: Db, user: AuthUser, changements: { nomAffiche?: string; langue?: (typeof LANGUES)[number]; nom?: string; prenom?: string }) {
+  const set: Partial<{ nomAffiche: string; langue: string; nom: string; prenom: string }> = {};
   if (changements.nomAffiche !== undefined) set.nomAffiche = changements.nomAffiche;
   if (changements.langue !== undefined) set.langue = changements.langue;
+  if (changements.nom !== undefined) set.nom = changements.nom;
+  if (changements.prenom !== undefined) set.prenom = changements.prenom;
+  // Le nom affiché suit le prénom et le nom, dès que l'un des deux change.
+  if (set.nom !== undefined || set.prenom !== undefined) {
+    const [actuel] = await db.select({ nom: users.nom, prenom: users.prenom }).from(users).where(eq(users.id, user.id)).limit(1);
+    const nom = set.nom ?? actuel?.nom ?? '';
+    const prenom = set.prenom ?? actuel?.prenom ?? '';
+    if (nom && prenom) set.nomAffiche = `${prenom} ${nom}`;
+  }
   if (Object.keys(set).length > 0) await db.update(users).set(set).where(eq(users.id, user.id));
   return lireProfil(db, user);
 }
@@ -32,10 +41,10 @@ export async function listerAdresses(db: Db, user: AuthUser) {
   return db.select().from(adresses).where(eq(adresses.userId, user.id)).orderBy(desc(adresses.createdAt));
 }
 
-export async function ajouterAdresse(db: Db, user: AuthUser, a: { libelle: string; quartier: string; repere?: string; latitude: number; longitude: number; photoCle?: string }) {
+export async function ajouterAdresse(db: Db, user: AuthUser, a: { libelle: string; quartier: string; repere?: string; batiment?: string; etage?: string; instructions?: string; latitude: number; longitude: number; photoCle?: string }) {
   const [row] = await db
     .insert(adresses)
-    .values({ userId: user.id, libelle: a.libelle, quartier: a.quartier, repere: a.repere ?? null, latitude: a.latitude, longitude: a.longitude, photoCle: a.photoCle ?? null })
+    .values({ userId: user.id, libelle: a.libelle, quartier: a.quartier, repere: a.repere ?? null, batiment: a.batiment ?? null, etage: a.etage ?? null, instructions: a.instructions ?? null, latitude: a.latitude, longitude: a.longitude, photoCle: a.photoCle ?? null })
     .returning();
   return row;
 }

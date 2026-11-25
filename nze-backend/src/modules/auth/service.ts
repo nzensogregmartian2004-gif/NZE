@@ -1,3 +1,4 @@
+import { LEGAL_VERSION } from '../legal/legal.content.ts';
 import { AppError } from '../../core/errors.ts';
 import { tentativesConnexion } from '../../db/schema.ts';
 // Authentification : inscription et connexion par téléphone et mot de passe, sans code SMS.
@@ -54,14 +55,46 @@ async function ouvrirSession(deps: AuthDeps, utilisateur: { id: string; role: st
   return { token, utilisateur: { id: utilisateur.id, role: utilisateur.role, telephone: utilisateur.telephone } };
 }
 
-export async function inscrire(deps: AuthDeps, brut: string, motDePasse: string, nomAffiche?: string, langue: 'fr' | 'en' | 'ar' | 'zh-Hans' = 'fr') {
+export interface ProfilInscription {
+  nom: string;
+  prenom: string;
+  dateNaissance: string;
+  accepteConditions: boolean;
+}
+
+// Date de naissance au format AAAA-MM-JJ : date réelle, pas dans le futur, pas plus de 120 ans.
+export function validerDateNaissance(texte: string): void {
+  const correcte = /^\d{4}-\d{2}-\d{2}$/.test(texte) && !Number.isNaN(Date.parse(`${texte}T00:00:00Z`))
+    && new Date(`${texte}T00:00:00Z`).toISOString().slice(0, 10) === texte;
+  if (!correcte) throw new AppError(400, 'DATE_NAISSANCE_INVALIDE', 'La date de naissance doit être au format AAAA-MM-JJ.');
+  const naissance = new Date(`${texte}T00:00:00Z`);
+  const maintenant = new Date();
+  if (naissance.getTime() > maintenant.getTime()) throw new AppError(400, 'DATE_NAISSANCE_INVALIDE', 'La date de naissance ne peut pas être dans le futur.');
+  if (maintenant.getUTCFullYear() - naissance.getUTCFullYear() > 120) throw new AppError(400, 'DATE_NAISSANCE_INVALIDE', 'La date de naissance semble incorrecte.');
+}
+
+export async function inscrire(deps: AuthDeps, brut: string, motDePasse: string, nomAffiche?: string, langue: 'fr' | 'en' | 'ar' | 'zh-Hans' = 'fr', profil?: ProfilInscription) {
   const telephone = normaliserTelephone(brut);
   validerMotDePasse(motDePasse);
+  if (profil) {
+    if (!profil.accepteConditions) throw new AppError(400, 'CONDITIONS_NON_ACCEPTEES', 'Vous devez accepter les conditions d’utilisation pour créer un compte.');
+    if (!profil.nom.trim() || !profil.prenom.trim()) throw new AppError(400, 'PROFIL_INCOMPLET', 'Le nom et le prénom sont obligatoires.');
+    validerDateNaissance(profil.dateNaissance);
+  }
   const [existant] = await deps.db.select({ id: users.id }).from(users).where(eq(users.telephone, telephone)).limit(1);
   if (existant) throw conflict('Un compte existe déjà pour ce numéro. Connectez-vous ou renouvelez votre mot de passe.');
   const [u] = await deps.db
     .insert(users)
-    .values({ telephone, role: 'client', motDePasseHash: await hashMotDePasse(motDePasse), nomAffiche: nomAffiche ?? null, langue })
+    .values({
+      telephone,
+      role: 'client',
+      motDePasseHash: await hashMotDePasse(motDePasse),
+      nomAffiche: profil ? `${profil.prenom.trim()} ${profil.nom.trim()}` : (nomAffiche ?? null),
+      langue,
+      ...(profil
+        ? { nom: profil.nom.trim(), prenom: profil.prenom.trim(), dateNaissance: profil.dateNaissance, conditionsVersion: LEGAL_VERSION, conditionsAccepteesLe: new Date() }
+        : {}),
+    })
     .returning();
   return ouvrirSession(deps, u);
 }

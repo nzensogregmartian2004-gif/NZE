@@ -28,7 +28,13 @@ function lesRoutes(couches: Couche[]): { methode: string; chemin: string }[] {
 // Nombre de routes déclarées dans le source : routes.ts de chaque module, plus app.ts.
 function declarationsDansLeSource(): number {
   const dossier = new URL('../src/modules/', import.meta.url);
-  const fichiers = readdirSync(dossier).map((m) => new URL(`${m}/routes.ts`, dossier)).filter((f) => existsSync(f));
+  // Tous les fichiers de routes de chaque module (routes.ts et fichiers annexes comme photos-routes.ts).
+  const fichiers: URL[] = [];
+  for (const m of readdirSync(dossier)) {
+    let contenus: string[] = [];
+    try { contenus = readdirSync(new URL(`${m}/`, dossier)); } catch { continue; }
+    for (const f of contenus) if (f.endsWith('routes.ts')) fichiers.push(new URL(`${m}/${f}`, dossier));
+  }
   fichiers.push(new URL('../src/app.ts', import.meta.url));
   const motif = /\b(?:r|app)\.(?:get|post|put|patch|delete)\(/g;
   return fichiers.reduce((total, f) => total + (readFileSync(f, 'utf8').match(motif) ?? []).length, 0);
@@ -49,6 +55,11 @@ const PUBLIQUES = new Set([
   'GET /categories',
   'GET /produits',
   'GET /produits/:id',
+  // Promotions en cours : publiques comme le catalogue, seules les offres actives sont renvoyées.
+  'GET /promotions',
+  // Photos d'articles (lien signé) et recherche par photo : publiques, sans donnée personnelle ni photo conservée.
+  'GET /produits/:id/photo',
+  'POST /recherche/photo',
   // Fiches prestataires publiées (D-P6) : publiques comme le catalogue. Seules les fiches publiées sont renvoyées, sans donnée interne.
   'GET /prestataires',
   'GET /prestataires/:id',
